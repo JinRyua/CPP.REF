@@ -2,13 +2,14 @@
 
 #include "Assets/AssetImporter.h"
 
+#include "FbxInstance.h"
 #include "Parser/AssimpParser.h"
 #include "SceneRendering/StaticMesh.h"
 
 AssetImporter::AssetImporter(Engine* engine) : Super()
 	, engine(engine)
 {
-
+	fbxInstance = NewObject<FbxInstance>();
 }
 
 AssetImporter::~AssetImporter()

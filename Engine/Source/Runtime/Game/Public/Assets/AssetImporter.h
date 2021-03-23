@@ -7,6 +7,7 @@
 
 class Engine;
 class StaticMesh;
+class FbxInstance;
 
 class GAME_API AssetImporter : virtual public Object
 {
@@ -15,6 +16,7 @@ public:
 
 private:
 	Engine* engine;
+	TRefPtr<FbxInstance> fbxInstance;
 
 public:
 	AssetImporter(Engine* engine);
