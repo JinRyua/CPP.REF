@@ -153,7 +153,13 @@ bool AssimpParser::ProcessMaterials()
 			}
 			
 			auto imageLoader = NewObject<COMImageLoader>(comBundle, fullpath);
-			auto imageFrame = imageLoader->GetFrame(0); 
+			if (!imageLoader->IsValid)
+			{
+				SE_LOG(LogAssets, Error, L"Imageloader cannot read image file: {0}", fullpath);
+				return nullptr;
+			}
+
+			auto imageFrame = imageLoader->GetFrame(0);
 			auto converter = imageFrame->ConvertFormat(DXGI_FORMAT_R8G8B8A8_UNORM);
 
 			return deviceBundle->CreateTexture2D(converter.Get(), engine->GetPrimaryCommandQueue(), DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);

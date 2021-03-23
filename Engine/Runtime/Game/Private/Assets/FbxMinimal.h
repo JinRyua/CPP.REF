@@ -8,4 +8,6 @@
 namespace fbxsdk
 {
 	class FbxManager;
+	class FbxImporter;
+	class FbxScene;
 }

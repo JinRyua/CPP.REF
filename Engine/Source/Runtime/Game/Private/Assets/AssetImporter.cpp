@@ -2,8 +2,10 @@
 
 #include "Assets/AssetImporter.h"
 
+#include <Path.h>
 #include "FbxInstance.h"
 #include "Parser/AssimpParser.h"
+#include "Parser/FbxParser.h"
 #include "SceneRendering/StaticMesh.h"
 
 AssetImporter::AssetImporter(Engine* engine) : Super()
@@ -19,6 +21,17 @@ AssetImporter::~AssetImporter()
 
 TRefPtr<StaticMesh> AssetImporter::ImportStaticMesh(TRefPtr<String> path)
 {
+	TRefPtr<String> ext = Path::GetExtension(path);
+	if (ext->Equals(L".fbx", true))
+	{
+		// Is fbx try parse, if failed, process as assimp.
+		FbxParser parser(engine, fbxInstance->GetManager());
+		if (parser.TryParse(path))
+		{
+			return parser.GetStaticMesh();
+		}
+	}
+
 	AssimpParser parser(engine);
 	if (!parser.TryParse(path))
 	{
