@@ -156,6 +156,31 @@ auto String::cend() const -> ConstIterator
     return text_buffer + len;
 }
 
+bool String::Equals(TRefPtr<String> value, bool bIgnoreCase) const
+{
+    if (bIgnoreCase)
+    {
+        if (Length != value->Length)
+        {
+            return false;
+        }
+
+        for (size_t i = 0; i < Length; ++i)
+        {
+            if (tolower(C_Str[i]) != tolower(value->C_Str[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    else
+    {
+        return operator ==(value);
+    }
+}
+
 TRefPtr<String> String::Substring(size_t startIndex, optional<size_t> length) const
 {
     if (!length.has_value())

@@ -76,6 +76,7 @@ public:
 	virtual ConstIterator cbegin() const override;
 	virtual ConstIterator cend() const override;
 
+	bool Equals(TRefPtr<String> value, bool bIgnoreCase) const;
 	TRefPtr<String> Substring(size_t startIndex, std::optional<size_t> length = std::nullopt) const;
 	std::optional<size_t> IndexOf(TRefPtr<String> value, size_t startIndex = 0, bool bIgnoreCase = false) const;
 	std::optional<size_t> IndexOf(wchar_t value, size_t startIndex = 0, bool bIgnoreCase = false) const;
