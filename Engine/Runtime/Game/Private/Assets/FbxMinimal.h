@@ -10,4 +10,11 @@ namespace fbxsdk
 	class FbxManager;
 	class FbxImporter;
 	class FbxScene;
+	class FbxNode;
+	class FbxMesh;
+	template<class TLayer>
+	class FbxLayerElementTemplate;
+	class FbxVector2;
+	class FbxVector4;
+	class FbxAMatrix;
 }
