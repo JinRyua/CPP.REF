@@ -491,6 +491,10 @@ class CppProjectGenerator
         CreateChildNode(ClCompile, "FunctionLevelLinking").InnerText = ReleaseCaseString;
         CreateChildNode(ClCompile, "IntrinsicFunctions").InnerText = ReleaseCaseString;
         CreateChildNode(ClCompile, "PreprocessorDefinitions").InnerText = PreprocessorDefinitions;
+        if (!bRelease)
+        {
+            CreateChildNode(ClCompile, "Optimization").InnerText = "Disabled";
+        }
         XmlNode Link = CreateChildNode(Group, "Link");
         CreateChildNode(Link, "EnableCOMDATFolding").InnerText = ReleaseCaseString;
         CreateChildNode(Link, "OptimizeReferences").InnerText = ReleaseCaseString;

@@ -35,7 +35,7 @@ public class BuildRules
     /// <summary>
     /// C++ 컴파일 버전을 선택합니다.
     /// </summary>
-    public CppVersion CppStandardVersion = CppVersion.Cpp14;
+    public CppVersion CppStandardVersion = CppVersion.Cpp20;
 
     /// <summary>
     /// 이 모듈에서 컴파일 대상으로 포함 시킬 코드 파일의 확장자를 설정합니다.

@@ -2,33 +2,23 @@
 
 #include "Core/Object.h"
 
-#include "TRefPtr.h"
-#include <typeinfo>
+#include "Core/TRefPtr.h"
 #include "Core/String.h"
+#include "Core/ReferenceCollector.h"
+#include "Core/Type.h"
+#include "Threading/Interlocked.h"
+#include "Reflection/TypeCollection.h"
 
-#undef interface
-#include <Windows.h>
-
-#undef InterlockedIncrement
-#undef InterlockedDecrement
-
-#ifdef _W64
-#define InterlockedIncrement(x) _InterlockedIncrement64(x)
-#define InterlockedDecrement(x) _InterlockedDecrement64(x)
-#else
-#define InterlockedIncrement(x) _InterlockedIncrement(x)
-#define InterlockedDecrement(x) _InterlockedDecrement(x)
+#if WITH_DEBUG
+size_t SObject::ObjCount;
 #endif
 
-Object::Object()
-	: bLockCollecting(true)
-	, ref_count(0)
-	, weak_references(nullptr)
+SObject::SObject() : This(false)
 {
 
 }
 
-Object::~Object()
+SObject::~SObject()
 {
 	if (weak_references != nullptr)
 	{
@@ -42,39 +32,53 @@ Object::~Object()
 			weak_references->Invalidate();
 		}
 	}
+
+	if (bReferenceCollectiong)
+	{
+		ReferenceCollector::RemoveReference(this);
+
+#if WITH_DEBUG
+		SInterlocked::Decrement64((int64&)ObjCount);
+#endif
+	}
 }
 
-TRefPtr<String> Object::ToString() const
+SString* SObject::ToString() const
 {
-	return typeid(*this).name();
+	return GetType()->ToString();
 }
 
-bool Object::Equals(TRefPtr<Object> right) const
+bool SObject::Equals(SObject* right) const
 {
-	return this == right.Get();
+	return this == right;
 }
 
-size_t Object::GetHashCode() const
+size_t SObject::GetHashCode() const
 {
 	return (size_t)this;
 }
 
-bool Object::operator ==(const TRefPtr<Object>& right) const
+SType* SObject::GetType() const
 {
-	return this == right.Get();
+	return TypeCollection::GetTypeByRTTI(typeid(*this));
 }
 
-bool Object::operator !=(const TRefPtr<Object>& right) const
+bool SObject::operator ==(SObject* right) const
 {
-	return this != right.Get();
+	return this == right;
 }
 
-void Object::AddRef()
+bool SObject::operator !=(SObject* right) const
+{
+	return this != right;
+}
+
+void SObject::AddRef()
 {
 	ref_count += 1;
 }
 
-void Object::Release()
+void SObject::Release()
 {
 	if ((ref_count -= 1) == 0)
 	{
@@ -85,14 +89,14 @@ void Object::Release()
 	}
 }
 
-void Object::AddRefInterlocked()
+void SObject::AddRefInterlocked()
 {
-	InterlockedIncrement((volatile ssize_t*)&ref_count);
+	SInterlocked::Increment64((int64&)ref_count);
 }
 
-void Object::ReleaseInterlocked()
+void SObject::ReleaseInterlocked()
 {
-	size_t decremented = InterlockedDecrement((volatile ssize_t*)&ref_count);
+	size_t decremented = (size_t)SInterlocked::Decrement64((int64&)ref_count);
 	if (decremented == 0)
 	{
 		if (!bLockCollecting)
@@ -102,11 +106,41 @@ void Object::ReleaseInterlocked()
 	}
 }
 
-WeakReferences* Object::GetWeakReferences() const
+WeakReferences* SObject::GetWeakReferences() const
 {
 	if (weak_references == nullptr)
 	{
 		weak_references = new WeakReferences();
 	}
 	return weak_references;
+}
+
+size_t SObject::GetReferenceCount() const
+{
+	return ref_count;
+}
+
+#if WITH_DEBUG
+
+size_t SObject::GetObjectCount()
+{
+	return ObjCount;
+}
+
+#endif
+
+SObject::SObject(bool bNoReferenceCollect)
+	: bLockCollecting(false)
+	, bReferenceCollectiong(!bNoReferenceCollect)
+	, ref_count(0)
+	, weak_references(nullptr)
+{
+	if (bReferenceCollectiong)
+	{
+		ReferenceCollector::AddReference(this);
+
+#if WITH_DEBUG
+		SInterlocked::Increment64((int64&)ObjCount);
+#endif
+	}
 }

@@ -4,19 +4,18 @@
 
 #undef interface
 #include <Windows.h>
-#include "ArgumentNullException.h"
-#include "IndexOutOfRangeException.h"
-#include "FormatException.h"
-#include "ArgumentException.h"
+#include "Exception/ArgumentNullException.h"
+#include "Exception/IndexOutOfRangeException.h"
+#include "Exception/FormatException.h"
+#include "Exception/ArgumentException.h"
+#include "Core/IStringFormattable.h"
 
 using namespace std;
 
-wchar_t String::EmptyBuffer[1] = { 0 };
-const TRefPtr<String> String::Empty = Object::NewObject<String>(EmptyBuffer);
+wchar_t SString::EmptyBuffer[1] = { 0 };
 
-#define ThrowIfNull(exp) if ((exp) == nullptr) { throw ArgumentNullException(L"(" L ## #exp L") == nullptr"); }
-#define ThrowArg(exp) if (exp) { throw ArgumentException(L ## #exp); }
-#define ThrowIfInvalid(exp) if (!exp.IsValid) { throw ArgumentNullException(L"!" L ## #exp); }
+#define ThrowIfNull(exp) if ((exp) == nullptr) { throw new SArgumentNullException("("_s #exp ## _s ") == nullptr"_s); }
+#define ThrowArg(exp) if (exp) { throw new SArgumentException(#exp ## _s); }
 
 namespace
 {
@@ -40,7 +39,7 @@ namespace
     }
 }
 
-String::String() : Super()
+SString::SString() : Super()
 	, text_buffer(nullptr)
 	, len(0)
 	, bDynamicBuffer(false)
@@ -48,7 +47,7 @@ String::String() : Super()
 	text_buffer = EmptyBuffer;
 }
 
-String::~String()
+SString::~SString()
 {
 	if (text_buffer != nullptr && bDynamicBuffer)
 	{
@@ -57,14 +56,14 @@ String::~String()
 	}
 }
 
-TRefPtr<String> String::ToString() const
+SString* SString::ToString() const
 {
-	return this;
+	return const_cast<SString*>(this);
 }
 
-bool String::Equals(TRefPtr<Object> right) const
+bool SString::Equals(SObject* right) const
 {
-	if (TRefPtr<String> ptr; right.Is<String>((String**)&ptr))
+	if (SString* ptr = Cast<SString>(right); ptr != nullptr)
 	{
 		return (*this).operator ==(ptr);
 	}
@@ -74,7 +73,7 @@ bool String::Equals(TRefPtr<Object> right) const
 	}
 }
 
-size_t String::GetHashCode() const
+size_t SString::GetHashCode() const
 {
     if (!hash_cache.has_value())
     {
@@ -99,22 +98,22 @@ size_t String::GetHashCode() const
     return hash_cache.value();
 }
 
-String::String(const char* text) : This(text, Strlen(text))
+SString::SString(const char* text) : This(text, Strlen(text))
 {
 
 }
 
-String::String(const wchar_t* text) : This(text, Strlen(text))
+SString::SString(const wchar_t* text) : This(text, Strlen(text))
 {
 
 }
 
-String::String(const char* text, size_t len) : This()
+SString::SString(const char* text, size_t len) : This()
 {
     Assign(text, len);
 }
 
-String::String(const wchar_t* text, size_t len) : This()
+SString::SString(const wchar_t* text, size_t len) : This()
 {
     if (text == EmptyBuffer)
     {
@@ -126,67 +125,58 @@ String::String(const wchar_t* text, size_t len) : This()
     }
 }
 
-String::String(const string& text) : This(text.c_str(), text.length())
+SString::SString(const string& text) : This(text.c_str(), text.length())
 {
 
 }
 
-String::String(const wstring& text) : This(text.c_str(), text.length())
+SString::SString(const wstring& text) : This(text.c_str(), text.length())
 {
 
 }
 
-String::String(string_view text) : This(text.data(), text.length())
+SString::SString(string_view text) : This(text.data(), text.length())
 {
 
 }
 
-String::String(wstring_view text) : This(text.data(), text.length())
+SString::SString(wstring_view text) : This(text.data(), text.length())
 {
 
 }
 
-auto String::cbegin() const -> ConstIterator
-{
-    return text_buffer;
-}
-
-auto String::cend() const -> ConstIterator
-{
-    return text_buffer + len;
-}
-
-TRefPtr<String> String::Substring(size_t startIndex, optional<size_t> length) const
+SString* SString::Substring(size_t startIndex, optional<size_t> length) const
 {
     if (!length.has_value())
     {
         length = len - startIndex;
     }
 
-    return NewObject<String>(text_buffer + startIndex, length.value());
+    return new SString(text_buffer + startIndex, length.value());
 }
 
-optional<size_t> String::IndexOf(TRefPtr<String> value, size_t startIndex, bool bIgnoreCase) const
+optional<size_t> SString::IndexOf(SString* value, size_t startIndex, bool bIgnoreCase) const
 {
-    ThrowIfInvalid(value);
-    ThrowArg(value->Length == 0);
+    SString* r = ""_s ""_s ""_s;
+    ThrowIfNull(value);
+    ThrowArg(value->GetLength() == 0);
 
     for (size_t i = startIndex; i < len; ++i)
     {
-        optional<size_t> find = IndexOf(value[0], i, bIgnoreCase);
+        optional<size_t> find = IndexOf(value->text_buffer[0], i, bIgnoreCase);
         // Could'n find any chars.
         if (!find.has_value())
         {
-            return nullopt;
+            return {};
         }
 
         // Find chars but lack of length.
         size_t rem = len - i;
-        if (rem < value->Length)
+        if (rem < value->GetLength())
         {
-            return nullopt;
+            return {};
         }
-        rem = value->Length;
+        rem = value->GetLength();
 
         const size_t seekpos = find.value();
         if (bIgnoreCase)
@@ -194,7 +184,7 @@ optional<size_t> String::IndexOf(TRefPtr<String> value, size_t startIndex, bool 
             bool bSucceeded = true;
             for (size_t j = 0; j < rem; ++j)
             {
-                if (tolower(text_buffer[seekpos + j]) != tolower(value[j]))
+                if (tolower(text_buffer[seekpos + j]) != tolower(value->text_buffer[j]))
                 {
                     bSucceeded = false;
                     break;
@@ -208,7 +198,7 @@ optional<size_t> String::IndexOf(TRefPtr<String> value, size_t startIndex, bool 
         }
         else
         {
-            if (memcmp(text_buffer + seekpos, value->C_Str, sizeof(wchar_t) * rem) == 0)
+            if (memcmp(text_buffer + seekpos, value->C_Str(), sizeof(wchar_t) * rem) == 0)
             {
                 return seekpos;
             }
@@ -217,10 +207,10 @@ optional<size_t> String::IndexOf(TRefPtr<String> value, size_t startIndex, bool 
         i = seekpos + 1;
     }
 
-    return nullopt;
+    return {};
 }
 
-optional<size_t> String::IndexOf(wchar_t value, size_t startIndex, bool bIgnoreCase) const
+optional<size_t> SString::IndexOf(wchar_t value, size_t startIndex, bool bIgnoreCase) const
 {
     ThrowArg(startIndex >= len);
 
@@ -243,10 +233,10 @@ optional<size_t> String::IndexOf(wchar_t value, size_t startIndex, bool bIgnoreC
         }
     }
 
-    return nullopt;
+    return {};
 }
 
-optional<size_t> String::IndexOfAny(const wchar_t* value_sequence, size_t length, size_t startIndex, bool bIgnoreCase) const
+optional<size_t> SString::IndexOfAny(const wchar_t* value_sequence, size_t length, size_t startIndex, bool bIgnoreCase) const
 {
     ThrowArg(startIndex >= len);
     ThrowIfNull(value_sequence);
@@ -275,10 +265,10 @@ optional<size_t> String::IndexOfAny(const wchar_t* value_sequence, size_t length
         }
     }
 
-    return nullopt;
+    return {};
 }
 
-string String::AsMultiByte() const
+string SString::AsMultiByte() const
 {
     string buf;
 
@@ -289,85 +279,28 @@ string String::AsMultiByte() const
     return buf;
 }
 
-const wchar_t* String::C_Str_get() const
+const wchar_t* SString::C_Str() const
 {
 	return text_buffer;
 }
 
-size_t String::Length_get() const
+size_t SString::GetLength() const
 {
 	return len;
 }
 
-bool String::operator < (const TRefPtr<String>& right) const
-{
-    if (!right.IsValid)
-    {
-        return false;
-    }
-
-    int compare = lstrcmpW(C_Str, right->C_Str);
-    return compare < 0;
-}
-
-bool String::operator ==(const TRefPtr<String>& right) const
-{
-	if (text_buffer == right->text_buffer)
-	{
-		return true;
-	}
-
-	else if (len != right->len)
-	{
-		return false;
-	}
-
-	else
-	{
-		return memcmp(text_buffer, right->text_buffer, len) == 0;
-	}
-}
-
-bool String::operator !=(const TRefPtr<String>& right) const
-{
-	if (text_buffer != right->text_buffer)
-	{
-		return true;
-	}
-
-	else if (len != right->len)
-	{
-		return true;
-	}
-
-	else
-	{
-		return memcmp(text_buffer, right->text_buffer, len) != 0;
-	}
-}
-
-wchar_t String::operator [](size_t index) const
-{
-    if (index > len)
-    {
-        throw IndexOutOfRangeException();
-    }
-
-    return text_buffer[index];
-}
-
-TRefPtr<String> String::Format(TRefPtr<String> format)
+SString* SString::Format(SString* format)
 {
     std::vector<int> r;
     std::span<int> g = r;
     return format;
 }
 
-TRefPtr<String> String::Join(TRefPtr<String> separator, const span<TRefPtr<String>>& values)
+SString* SString::Join(SString* separator, const span<SString*>& values)
 {
     if (values.empty())
     {
-        return Empty;
+        return new SString(EmptyBuffer);
     }
 
     if (values.size() <= 1)
@@ -378,10 +311,10 @@ TRefPtr<String> String::Join(TRefPtr<String> separator, const span<TRefPtr<Strin
     size_t total_length = 0;
     for (size_t i = 0; i < values.size(); ++i)
     {
-        total_length += values[i]->Length;
+        total_length += values[i]->GetLength();
     }
 
-    size_t sep_length = separator->Length;
+    size_t sep_length = separator->GetLength();
     total_length += sep_length * (values.size() - 1);
 
     wchar_t* buffer = new wchar_t[SizeAsBoundary(total_length + 1)];
@@ -414,20 +347,20 @@ TRefPtr<String> String::Join(TRefPtr<String> separator, const span<TRefPtr<Strin
 
     for (size_t i = 0; i < values.size(); ++i)
     {
-        size_t length = values[i]->Length;
-        memcpy(buffer + seekpos, values[i]->C_Str, sizeof(wchar_t) * length);
+        size_t length = values[i]->GetLength();
+        memcpy(buffer + seekpos, values[i]->C_Str(), sizeof(wchar_t) * length);
         seekpos += length;
 
         if (seekpos < total_length)
         {
-            memcpy(buffer + seekpos, separator->C_Str, sizeof(wchar_t*) * sep_length);
+            memcpy(buffer + seekpos, separator->C_Str(), sizeof(wchar_t*) * sep_length);
             seekpos += sep_length;
         }
     }
 
     buffer[total_length] = 0;
 
-    auto result = NewObject<String>();
+    auto result = new SString();
     result->text_buffer = buffer;
     result->len = total_length;
     result->bDynamicBuffer = true;
@@ -436,11 +369,11 @@ TRefPtr<String> String::Join(TRefPtr<String> separator, const span<TRefPtr<Strin
     return move(result);
 }
 
-TRefPtr<String> String::Concat(const span<TRefPtr<String>>& values)
+SString* SString::Concat(const span<SString*>& values)
 {
     if (values.empty())
     {
-        return Empty;
+        return new SString(EmptyBuffer);
     }
 
     if (values.size() <= 1)
@@ -451,7 +384,7 @@ TRefPtr<String> String::Concat(const span<TRefPtr<String>>& values)
     size_t total_length = 0;
     for (size_t i = 0; i < values.size(); ++i)
     {
-        total_length += values[i]->Length;
+        total_length += values[i]->GetLength();
     }
 
     wchar_t* buffer = new wchar_t[SizeAsBoundary(total_length + 1)];
@@ -484,14 +417,14 @@ TRefPtr<String> String::Concat(const span<TRefPtr<String>>& values)
 
     for (size_t i = 0; i < values.size(); ++i)
     {
-        size_t length = values[i]->Length;
-        memcpy(buffer + seekpos, values[i]->C_Str, sizeof(wchar_t) * length);
+        size_t length = values[i]->GetLength();
+        memcpy(buffer + seekpos, values[i]->C_Str(), sizeof(wchar_t) * length);
         seekpos += length;
     }
 
     buffer[total_length] = 0;
 
-    auto result = NewObject<String>();
+    auto result = new SString();
     result->text_buffer = buffer;
     result->len = total_length;
     result->bDynamicBuffer = true;
@@ -500,21 +433,21 @@ TRefPtr<String> String::Concat(const span<TRefPtr<String>>& values)
     return move(result);
 }
 
-bool String::IsNullOrEmpty(const TRefPtr<String>& value)
+bool SString::IsNullOrEmpty(SString* value)
 {
-    return !value.IsValid || value->Length == 0;
+    return value == nullptr || value->GetLength() == 0;
 }
 
-bool String::IsNullOrWhiteSpace(const TRefPtr<String>& value)
+bool SString::IsNullOrWhiteSpace(SString* value)
 {
-    if (!value.IsValid)
+    if (value == nullptr)
     {
         return true;
     }
 
-    for (size_t i = 0; i < value->Length; i++)
+    for (size_t i = 0; i < value->GetLength(); i++)
     {
-        if (!IsWhiteSpace(value[i]))
+        if (!IsWhiteSpace(value->text_buffer[i]))
         {
             return false;
         }
@@ -523,15 +456,12 @@ bool String::IsNullOrWhiteSpace(const TRefPtr<String>& value)
     return true;
 }
 
-TRefPtr<String> String::FormatHelper(TRefPtr<String> format, const span<TRefPtr<Object>>& unpackedArgs)
+SString* SString::FormatHelper(SString* format, const span<SObject*>& unpackedArgs)
 {
-    if (!format.IsValid)
-    {
-        throw ArgumentNullException();
-    }
+    ThrowIfNull(format);
  
     size_t pos = 0;
-    size_t len = format->Length;
+    size_t len = format->GetLength();
     wchar_t ch = L'\x0';
 
     std::wstringstream wss;
@@ -543,24 +473,24 @@ TRefPtr<String> String::FormatHelper(TRefPtr<String> format, const span<TRefPtr<
 
         while (pos < len)
         {
-            ch = format[pos];
+            ch = format->text_buffer[pos];
  
             pos++;
             if (ch == L'}')
             {
-                if (pos < len && format[pos] == L'}')
+                if (pos < len && format->text_buffer[pos] == L'}')
                 {
                     pos++;
                 }
                 else
                 {
-                    throw FormatException();
+                    throw SFormatException();
                 }
             }
  
             if (ch == L'{')
             {
-                if (pos < len && format[pos] == L'{')
+                if (pos < len && format->text_buffer[pos] == L'{')
                 {
                     pos++;
                 }
@@ -580,9 +510,9 @@ TRefPtr<String> String::FormatHelper(TRefPtr<String> format, const span<TRefPtr<
         }
 
         pos++;
-        if (pos == len || (ch = format[pos]) < L'0' || ch > L'9')
+        if (pos == len || (ch = format->text_buffer[pos]) < L'0' || ch > L'9')
         {
-            throw FormatException();
+            throw SFormatException();
         }
 
         size_t index = 0;
@@ -592,18 +522,18 @@ TRefPtr<String> String::FormatHelper(TRefPtr<String> format, const span<TRefPtr<
             pos++;
             if (pos == len)
             {
-                throw FormatException();
+                throw SFormatException();
             }
 
-            ch = format[pos];
+            ch = format->text_buffer[pos];
         } while (ch >= L'0' && ch <= L'9' && index < 1000000);
 
         if (index >= unpackedArgs.size())
         {
-            throw FormatException(L"Format index is out of range.");
+            throw new SFormatException("Format index is out of range."_s);
         }
 
-        while (pos < len && (ch = format[pos]) == L' ')
+        while (pos < len && (ch = format->text_buffer[pos]) == L' ')
         {
             pos++;
         }
@@ -613,31 +543,31 @@ TRefPtr<String> String::FormatHelper(TRefPtr<String> format, const span<TRefPtr<
         if (ch == L',')
         {
             pos++;
-            while (pos < len && format[pos] == L' ')
+            while (pos < len && format->text_buffer[pos] == L' ')
             {
                 pos++;
             }
  
             if (pos == len)
             {
-                throw FormatException();
+                throw SFormatException();
             }
 
-            ch = format[pos];
+            ch = format->text_buffer[pos];
             if (ch == L'-')
             {
                 leftJustify = true;
                 pos++;
                 if (pos == len)
                 {
-                    throw FormatException();
+                    throw SFormatException();
                 }
-                ch = format[pos];
+                ch = format->text_buffer[pos];
             }
 
             if (ch < L'0' || ch > L'9')
             {
-                throw FormatException();
+                throw SFormatException();
             }
 
             do
@@ -646,18 +576,18 @@ TRefPtr<String> String::FormatHelper(TRefPtr<String> format, const span<TRefPtr<
                 pos++;
                 if (pos == len)
                 {
-                    throw FormatException();
+                    throw SFormatException();
                 }
-                ch = format[pos];
+                ch = format->text_buffer[pos];
             } while (ch >= L'0' && ch <= L'9' && width < 1000000);
         }
  
-        while (pos < len && (ch = format[pos]) == L' ')
+        while (pos < len && (ch = format->text_buffer[pos]) == L' ')
         {
             pos++;
         }
 
-        Object* arg = unpackedArgs[index].Get();
+        SObject* arg = unpackedArgs[index];
         std::wostringstream fmt;
         if (ch == L':')
         {
@@ -668,25 +598,25 @@ TRefPtr<String> String::FormatHelper(TRefPtr<String> format, const span<TRefPtr<
             {
                 if (pos == len)
                 {
-                    throw FormatException();
+                    throw SFormatException();
                 }
 
-                ch = format[pos];
+                ch = format->text_buffer[pos];
                 pos++;
                 if (ch == L'{')
                 {
-                    if (pos < len && format[pos] == L'{')
+                    if (pos < len && format->text_buffer[pos] == L'{')
                     {
                         pos++;
                     }
                     else
                     {
-                        throw FormatException();
+                        throw SFormatException();
                     }
                 }
                 else if (ch == L'}')
                 {
-                    if (pos < len && format[pos] == L'}')
+                    if (pos < len && format->text_buffer[pos] == L'}')
                     {
                         pos++;
                     }
@@ -703,7 +633,7 @@ TRefPtr<String> String::FormatHelper(TRefPtr<String> format, const span<TRefPtr<
 
         if (ch != L'}')
         {
-            throw FormatException();
+            throw SFormatException();
         }
 
         pos++;
@@ -714,11 +644,11 @@ TRefPtr<String> String::FormatHelper(TRefPtr<String> format, const span<TRefPtr<
         {
             if (IStringFormattable* formattable = nullptr; fmtstr.length() != 0 && (formattable = dynamic_cast<IStringFormattable*>(arg)) != nullptr)
             {
-                s = formattable->ToString(fmtstr)->C_Str;
+                s = formattable->ToString(new SString(fmtstr.c_str()))->C_Str();
             }
             else
             {
-                s = arg->ToString()->C_Str;
+                s = arg->ToString()->C_Str();
             }
         }
 
@@ -744,10 +674,10 @@ TRefPtr<String> String::FormatHelper(TRefPtr<String> format, const span<TRefPtr<
         }
     }
 
-    return wss.str();
+    return new SString(wss.str().c_str());
 }
 
-wchar_t* String::MultiByteToWideChar(const char* multibyte, size_t* len)
+wchar_t* SString::MultiByteToWideChar(const char* multibyte, size_t* len)
 {
 	int length = ::MultiByteToWideChar(CP_UTF8, 0, multibyte, (int)*len, nullptr, 0);
     auto* buffer = AllocCharBuffer<wchar_t>(*len + 1);
@@ -756,38 +686,38 @@ wchar_t* String::MultiByteToWideChar(const char* multibyte, size_t* len)
 	return buffer;
 }
 
-wchar_t* String::CopyAllocate(const wchar_t* text, size_t len)
+wchar_t* SString::CopyAllocate(const wchar_t* text, size_t len)
 {
     auto* buffer = AllocCharBuffer<wchar_t>(len + 1);
 	memcpy(buffer, text, sizeof(wchar_t) * len);
 	return buffer;
 }
 
-void* String::AllocInternal(size_t sizeInBytes)
+void* SString::AllocInternal(size_t sizeInBytes)
 {
     return new int8[sizeInBytes]{ };
 }
 
-void String::FreeInternal(void* internalPointer)
+void SString::FreeInternal(void* internalPointer)
 {
     delete[] reinterpret_cast<int8*&>(internalPointer);
 }
 
-void String::Assign(const char* text, size_t len)
+void SString::Assign(const char* text, size_t len)
 {
     text_buffer = MultiByteToWideChar(text, &len);
     this->len = len;
     bDynamicBuffer = true;
 }
 
-void String::Assign(const wchar_t* text, size_t len)
+void SString::Assign(const wchar_t* text, size_t len)
 {
     text_buffer = CopyAllocate(text, len);
     this->len = len;
     bDynamicBuffer = true;
 }
 
-size_t String::SizeAsBoundary(size_t len)
+size_t SString::SizeAsBoundary(size_t len)
 {
 	size_t rem = len % 4;
 	if (rem != 0)

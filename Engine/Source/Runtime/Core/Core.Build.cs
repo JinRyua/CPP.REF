@@ -5,5 +5,6 @@ public class CoreBuild : BuildRules
     public CoreBuild()
     {
         CppStandardVersion = CppVersion.Cpp20;
+        PrivatePCHHeaderFile = "Core";
     }
 }

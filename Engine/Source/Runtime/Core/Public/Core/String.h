@@ -2,17 +2,13 @@
 
 #pragma once
 
-#include "CoreAPI.h"
-#include "Core/Object.h"
+#include "Object.h"
 
 #include <vector>
+#include <span>
 #include <string>
 #include <optional>
-#include <span>
-#include "CoreConcepts.h"
-#include "TRefPtr.h"
 #include "IStringFormattable.h"
-#include "IEnumerable.h"
 
 template<class T>
 concept TIsStringConvertible = requires(const T& arg)
@@ -36,12 +32,22 @@ concept TIsOnlyStringConvertible = VIsStringConvertible<T> && !VIsFormattableStr
 template<class TItem>
 using StringIterator = TItem*;
 
-class CORE_API String : virtual public Object, virtual public IConstEnumerable<StringIterator, wchar_t>
+/// <summary>
+/// 수정 불가능한 문자열 개체를 표현합니다.
+/// </summary>
+SCLASS(SString) class CORE_API SString final : virtual public SObject
 {
+	SCLASS_BODY(SString)
+
 public:
-	using Super = Object;
-	using This = String;
+	/// <summary>
+	/// 문자열의 각 문자를 반복하는 반복 개체입니다.
+	/// </summary>
 	using Iterator = StringIterator<wchar_t>;
+
+	/// <summary>
+	/// 문자열의 각 문자를 반복하는 반복 개체입니다.
+	/// </summary>
 	using ConstIterator = StringIterator<const wchar_t>;
 
 private:
@@ -53,72 +59,243 @@ private:
 	mutable std::optional<size_t> hash_cache;
 
 public:
-	String();
-	~String() override;
+	/// <summary>
+	/// 빈 문자열 개체를 초기화합니다.
+	/// </summary>
+	SString();
+	~SString() override;
 
-	TRefPtr<String> ToString() const override;
-	bool Equals(TRefPtr<Object> right) const override;
+	/// <summary>
+	/// 개체를 가져옵니다.
+	/// </summary>
+	SString* ToString() const override;
+
+	/// <summary>
+	/// 대상 개체가 문자열 개체일 경우 대상 문자열 개체와 같은지 비교합니다.
+	/// </summary>
+	/// <param name="right"> 대상 개체를 전달합니다. </param>
+	/// <returns> 비교 결과가 반환됩니다. </returns>
+	bool Equals(SObject* right) const override;
+
+	/// <summary>
+	/// 문자열 전체의 해시 코드를 가져옵니다.
+	/// </summary>
+	/// <returns> 해시 코드가 반환됩니다. </returns>
 	size_t GetHashCode() const override;
 
-	String(const char* text);
-	String(const wchar_t* text);
-	String(const char* text, size_t len);
-	String(const wchar_t* text, size_t len);
-	String(const std::string& text);
-	String(const std::wstring& text);
-	String(std::string_view text);
-	String(std::wstring_view text);
+	/// <summary>
+	/// 표준 문자열로 개체를 초기화합니다.
+	/// </summary>
+	/// <param name="text"> 표준 문자열을 전달합니다. </param>
+	SString(const char* text);
+
+	/// <summary>
+	/// 표준 문자열로 개체를 초기화합니다.
+	/// </summary>
+	/// <param name="text"> 표준 문자열을 전달합니다. </param>
+	SString(const wchar_t* text);
+
+	/// <summary>
+	/// 표준 문자열로 개체를 초기화합니다.
+	/// </summary>
+	/// <param name="text"> 표준 문자열을 전달합니다. </param>
+	/// <param name="len"> 표준 문자열의 길이를 전달합니다. </param>
+	SString(const char* text, size_t len);
+
+	/// <summary>
+	/// 표준 문자열로 개체를 초기화합니다.
+	/// </summary>
+	/// <param name="text"> 표준 문자열을 전달합니다. </param>
+	/// <param name="len"> 표준 문자열의 길이를 전달합니다. </param>
+	SString(const wchar_t* text, size_t len);
+
+	/// <summary>
+	/// 표준 문자열로 개체를 초기화합니다.
+	/// </summary>
+	/// <param name="text"> 표준 문자열을 전달합니다. </param>
+	SString(const std::string& text);
+
+	/// <summary>
+	/// 표준 문자열로 개체를 초기화합니다.
+	/// </summary>
+	/// <param name="text"> 표준 문자열을 전달합니다. </param>
+	SString(const std::wstring& text);
+
+	/// <summary>
+	/// 표준 문자열로 개체를 초기화합니다.
+	/// </summary>
+	/// <param name="text"> 표준 문자열을 전달합니다. </param>
+	SString(std::string_view text);
+
+	/// <summary>
+	/// 표준 문자열로 개체를 초기화합니다.
+	/// </summary>
+	/// <param name="text"> 표준 문자열을 전달합니다. </param>
+	SString(std::wstring_view text);
+
+	/// <summary>
+	/// 표준 문자열로 개체를 초기화합니다.
+	/// </summary>
+	/// <param name="begin"> 표준 문자열의 반복기 시작 위치를 전달합니다. </param>
+	/// <param name="end"> 표준 문자열의 반복기 종료 위치를 전달합니다. </param>
 	template<TIsIterator<char> TIterator>
-	String(TIterator begin, TIterator end);
+	SString(TIterator begin, TIterator end);
+
+	/// <summary>
+	/// 표준 문자열로 개체를 초기화합니다.
+	/// </summary>
+	/// <param name="begin"> 표준 문자열의 반복기 시작 위치를 전달합니다. </param>
+	/// <param name="end"> 표준 문자열의 반복기 종료 위치를 전달합니다. </param>
 	template<TIsIterator<wchar_t> TIterator>
-	String(TIterator begin, TIterator end);
+	SString(TIterator begin, TIterator end);
 
-	virtual ConstIterator cbegin() const override;
-	virtual ConstIterator cend() const override;
+	/// <summary>
+	/// 부분 문자열을 가져옵니다.
+	/// </summary>
+	/// <param name="startIndex"> 부분 문자열의 시작 위치를 전달합니다. </param>
+	/// <param name="length"> 부분 문자열의 길이를 가져옵니다. </param>
+	/// <returns> 부분 문자열 개체가 반환됩니다. </returns>
+	SString* Substring(size_t startIndex, std::optional<size_t> length = {}) const;
 
-	TRefPtr<String> Substring(size_t startIndex, std::optional<size_t> length = std::nullopt) const;
-	std::optional<size_t> IndexOf(TRefPtr<String> value, size_t startIndex = 0, bool bIgnoreCase = false) const;
+	/// <summary>
+	/// 문자열에서 특정 값을 찾습니다.
+	/// </summary>
+	/// <param name="value"> 찾을 값을 전달합니다. </param>
+	/// <param name="startIndex"> 찾기 시작할 위치를 전달합니다. </param>
+	/// <param name="bIgnoreCase"> 대소문자 구분을 무시합니다. </param>
+	/// <returns> 찾았을 경우 위치의 인덱스가, 그렇지 않을 경우 <see cref="std::nullopt"/>가 반환됩니다. </returns>
+	std::optional<size_t> IndexOf(SString* value, size_t startIndex = 0, bool bIgnoreCase = false) const;
+
+	/// <summary>
+	/// 문자열에서 특정 값을 찾습니다.
+	/// </summary>
+	/// <param name="value"> 찾을 값을 전달합니다. </param>
+	/// <param name="startIndex"> 찾기 시작할 위치를 전달합니다. </param>
+	/// <param name="bIgnoreCase"> 대소문자 구분을 무시합니다. </param>
+	/// <returns> 찾았을 경우 위치의 인덱스가, 그렇지 않을 경우 <see cref="std::nullopt"/>가 반환됩니다. </returns>
 	std::optional<size_t> IndexOf(wchar_t value, size_t startIndex = 0, bool bIgnoreCase = false) const;
+
+	/// <summary>
+	/// 문자열에서 특정 값 목록 중 일치하는 아무 것을 찾습니다.
+	/// </summary>
+	/// <param name="value_sequence"> 찾을 값 목록을 전달합니다. </param>
+	/// <param name="length"> 찾을 값 목록의 길이를 전달합니다. </param>
+	/// <param name="startIndex"> 찾기 시작할 위치를 전달합니다. </param>
+	/// <param name="bIgnoreCase"> 대소문자 구분을 무시합니다. </param>
+	/// <returns> 찾았을 경우 위치의 인덱스가, 그렇지 않을 경우 <see cref="std::nullopt"/>가 반환됩니다. </returns>
 	std::optional<size_t> IndexOfAny(const wchar_t* value_sequence, size_t length, size_t startIndex = 0, bool bIgnoreCase = false) const;
 
+	/// <summary>
+	/// 멀티바이트 형식 문자열로 변경합니다.
+	/// </summary>
+	/// <returns> 표준 문자열 개체가 반환됩니다. </returns>
 	std::string AsMultiByte() const;
 
-	vs_property_get(const wchar_t*, C_Str);
-	vs_property_get(size_t, Length);
+	/// <summary>
+	/// 네이티브 문자열 포인터를 가져옵니다.
+	/// </summary>
+	/// <returns> 문자열 포인터가 반환됩니다. </returns>
+	const wchar_t* C_Str() const;
 
-	bool operator < (const TRefPtr<String>& right) const;
-	bool operator ==(const TRefPtr<String>& right) const;
-	bool operator !=(const TRefPtr<String>& right) const;
-	wchar_t operator [](size_t index) const;
+	/// <summary>
+	/// 문자열 길이를 가져옵니다.
+	/// </summary>
+	/// <returns> 길이가 반환됩니다. </returns>
+	size_t GetLength() const;
 
+	/// <summary>
+	/// 지정 서식을 사용하여 텍스트를 만듭니다.
+	/// </summary>
+	/// <typeparam name="...TArgs"> 매개변수 형식 목록입니다. </typeparam>
+	/// <param name="format"> 서식 텍스트를 전달합니다. </param>
+	/// <param name="...args"> 서식 매개변수를 전달합니다. </param>
+	/// <returns> 생성된 텍스트가 반환됩니다. </returns>
 	template<class... TArgs>
-	static TRefPtr<String> Format(TRefPtr<String> format, TArgs&&... args);
-	static TRefPtr<String> Format(TRefPtr<String> format);
+	static SString* Format(SString* format, TArgs&&... args);
+
+	/// <summary>
+	/// 지정 서식을 사용하여 텍스트를 만듭니다.
+	/// </summary>
+	/// <typeparam name="...TArgs"> 매개변수 형식 목록입니다. </typeparam>
+	/// <param name="format"> 서식 텍스트를 전달합니다. </param>
+	/// <returns> 생성된 텍스트가 반환됩니다. </returns>
+	static SString* Format(SString* format);
+
+	/// <summary>
+	/// 문자열 사이를 지정자로 연결합니다.
+	/// </summary>
+	/// <typeparam name="...TArgs"> 매개변수 형식 목록입니다. </typeparam>
+	/// <param name="separator"> 지정자를 전달합니다. </param>
+	/// <param name="arg1"> 매개변수 목록을 전달합니다. </param>
+	/// <param name="arg2"> 매개변수 목록을 전달합니다. </param>
+	/// <param name="...values"> 매개변수 목록을 전달합니다. </param>
+	/// <returns> 생성된 텍스트가 반환됩니다. </returns>
 	template<class... TArgs>
-	static TRefPtr<String> Join(TRefPtr<String> separator, TRefPtr<String> arg1, TRefPtr<String> arg2, TArgs&&... values);
+	static SString* Join(SString* separator, SString* arg1, SString* arg2, TArgs&&... values);
+
+	/// <summary>
+	/// 문자열 사이를 지정자로 연결합니다.
+	/// </summary>
+	/// <typeparam name="...TArgs"> 매개변수 형식 목록입니다. </typeparam>
+	/// <param name="separator"> 지정자를 전달합니다. </param>
+	/// <param name="values"> 매개변수 목록을 전달합니다. </param>
+	/// <returns> 생성된 텍스트가 반환됩니다. </returns>
 	template<class T, size_t N> requires TIsStringConvertible<T> || TIsStringConstructible<T>
-	static TRefPtr<String> Join(TRefPtr<String> separator, const T(&values)[N]);
-	template<THasStdEnumerable TContainer> requires TIsStringConvertible<decltype(*std::begin(TContainer()))>
-	static TRefPtr<String> Join(TRefPtr<String> separator, const TContainer& values);
-	template<THasStdEnumerable TContainer> requires TIsStringConstructible<decltype(*std::begin(TContainer()))>
-	static TRefPtr<String> Join(TRefPtr<String> separator, const TContainer& values);
-	static TRefPtr<String> Join(TRefPtr<String> separator, const std::span<TRefPtr<String>>& values);
-	template<class... TArgs>
-	static TRefPtr<String> Concat(TRefPtr<String> arg1, TRefPtr<String> arg2, TArgs&&... values);
-	template<class T, size_t N> requires TIsStringConvertible<T> || TIsStringConstructible<T>
-	static TRefPtr<String> Concat(const T(&values)[N]);
-	template<THasStdEnumerable TContainer> requires TIsStringConvertible<decltype(*std::begin(TContainer()))>
-	static TRefPtr<String> Concat(const TContainer& values);
-	template<THasStdEnumerable TContainer> requires TIsStringConstructible<decltype(*std::begin(TContainer()))>
-	static TRefPtr<String> Concat(const TContainer& values);
-	static TRefPtr<String> Concat(const std::span<TRefPtr<String>>& values);
-	static bool IsNullOrEmpty(const TRefPtr<String>& value);
-	static bool IsNullOrWhiteSpace(const TRefPtr<String>& value);
+	static SString* Join(SString* separator, const T(&values)[N]);
 
-	static const TRefPtr<String> Empty;
+	/// <summary>
+	/// 문자열 사이를 지정자로 연결합니다.
+	/// </summary>
+	/// <param name="separator"> 지정자를 전달합니다. </param>
+	/// <param name="values"> 매개변수 목록을 전달합니다. </param>
+	/// <returns> 생성된 텍스트가 반환됩니다. </returns>
+	static SString* Join(SString* separator, const std::span<SString*>& values);
+
+	/// <summary>
+	/// 문자열을 연결합니다.
+	/// </summary>
+	/// <typeparam name="...TArgs"> 매개변수 형식 목록입니다. </typeparam>
+	/// <param name="arg1"> 매개변수 목록을 전달합니다. </param>
+	/// <param name="arg2"> 매개변수 목록을 전달합니다. </param>
+	/// <param name="...values"> 매개변수 목록을 전달합니다. </param>
+	/// <returns> 생성된 텍스트가 반환됩니다. </returns>
+	template<class... TArgs>
+	static SString* Concat(SString* arg1, SString* arg2, TArgs&&... values);
+
+	/// <summary>
+	/// 문자열을 연결합니다.
+	/// </summary>
+	/// <typeparam name="...TArgs"> 매개변수 형식 목록입니다. </typeparam>
+	/// <param name="separator"> 지정자를 전달합니다. </param>
+	/// <param name="values"> 매개변수 목록을 전달합니다. </param>
+	/// <returns> 생성된 텍스트가 반환됩니다. </returns>
+	template<class T, size_t N> requires TIsStringConvertible<T> || TIsStringConstructible<T>
+	static SString* Concat(const T(&values)[N]);
+
+	/// <summary>
+	/// 문자열을 연결합니다.
+	/// </summary>
+	/// <param name="separator"> 지정자를 전달합니다. </param>
+	/// <param name="values"> 매개변수 목록을 전달합니다. </param>
+	/// <returns> 생성된 텍스트가 반환됩니다. </returns>
+	static SString* Concat(const std::span<SString*>& values);
+
+	/// <summary>
+	/// 문자열 개체가 널이거나 비어있는지 검사합니다.
+	/// </summary>
+	/// <param name="value"> 문자열 개체를 전달합니다. </param>
+	/// <returns> 검사 결과를 반환합니다. </returns>
+	static bool IsNullOrEmpty(SString* value);
+
+	/// <summary>
+	/// 문자열 개체가 널이거나 공백으로 이루어져있는지 검사합니다.
+	/// </summary>
+	/// <param name="value"> 문자열 개체를 전달합니다. </param>
+	/// <returns> 검사 결과를 반환합니다. </returns>
+	static bool IsNullOrWhiteSpace(SString* value);
 
 private:
-	static TRefPtr<String> FormatHelper(TRefPtr<String> format, const std::span<TRefPtr<Object>>& unpackedArgs);
+	static SString* FormatHelper(SString* format, const std::span<SObject*>& unpackedArgs);
 	wchar_t* MultiByteToWideChar(const char* multibyte, size_t* len);
 	wchar_t* CopyAllocate(const wchar_t* text, size_t len);
 
@@ -139,20 +316,25 @@ private:
 	static size_t SizeAsBoundary(size_t len);
 
 	template<TIsRefCore T>
-	static TRefPtr<Object> GetString(TRefPtr<T> packedArg);
+	static SObject* GetString(T* packedArg);
 	template<TIsPrimitive T>
-	static TRefPtr<Object> GetString(T packedArg);
+	static SObject* GetString(T packedArg);
 	template<TIsChar T>
-	static TRefPtr<Object> GetString(const T* packedArg);
+	static SObject* GetString(const T* packedArg);
 	template<TIsOnlyStringConvertible T>
-	static TRefPtr<Object> GetString(const T& packedArg);
+	static SObject* GetString(const T& packedArg);
 	template<TIsFormattableStringConvertible T>
-	static TRefPtr<Object> GetString(const T& packedArg);
-	template<TIsBaseOf<Object> T>
-	static TRefPtr<Object> GetString(const T* packedArg);
+	static SObject* GetString(const T& packedArg);
+	template<TIsBaseOf<SObject> T>
+	static SObject* GetString(const T* packedArg);
 
 	template<class T, class... TArgs>
-	static void FormatUnpack(std::vector<TRefPtr<Object>>& container, size_t index, T&& arg, TArgs&&... args);
+	static void FormatUnpack(std::vector<SObject*>& container, size_t index, T&& arg, TArgs&&... args);
 };
+
+inline SString* operator "" _s(const char* text, size_t length)
+{
+	return new SString(text, length);
+}
 
 #include "String.inl"
