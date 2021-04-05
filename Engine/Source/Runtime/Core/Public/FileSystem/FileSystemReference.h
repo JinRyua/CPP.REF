@@ -51,7 +51,8 @@ protected:
 private:
 	static bool IsValidPath(SString* path);
 	static bool IsRootBased(SString* path);
-	static void NormalizePathDirectorySeparator(SString* path);
+	static SString* NormalizePath(SString* path);
+	static SString* NormalizePathDirectorySeparator(SString* path);
 
 	static bool IsDriveLetter(wchar_t letter);
 	static bool IsDirectorySeparator(wchar_t letter);

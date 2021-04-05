@@ -2,6 +2,7 @@
 
 #include "FileSystem/FileSystemReference.h"
 
+#include <sstream>
 #include "Core/String.h"
 
 using namespace std;
@@ -62,6 +63,43 @@ bool SFileSystemReference::IsRootBased(SString* path)
 	}
 
 	return !IsDirectorySeparator(c_str[2]);
+}
+
+SString* SFileSystemReference::NormalizePath(SString* path)
+{
+	path = NormalizePathDirectorySeparator(path);
+	return path;
+}
+
+SString* SFileSystemReference::NormalizePathDirectorySeparator(SString* path)
+{
+	// \를 /로 바꿉니다.
+	wstringstream wss;
+
+	size_t seekpos = 0;
+	for (; seekpos < path->GetLength();)
+	{
+		optional<size_t> indexOf = path->IndexOf(L'\\', seekpos);
+		if (indexOf.has_value())
+		{
+			wss << wstring_view(path->C_Str() + seekpos, indexOf.value() - seekpos);
+			seekpos = indexOf.value() + 1;
+		}
+
+		// 이 경우 이 문자열에는 \가 존재하지 않습니다.
+		else if (seekpos == 0)
+		{
+			return path;
+		}
+	}
+
+	size_t remain = path->GetLength() - seekpos;
+	if (remain != 0)
+	{
+		wss << wstring_view(path->C_Str() + seekpos, remain);
+	}
+
+	return new SString(wss.str());
 }
 
 bool SFileSystemReference::IsDriveLetter(wchar_t letter)
