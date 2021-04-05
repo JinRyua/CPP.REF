@@ -289,6 +289,77 @@ size_t SString::GetLength() const
 	return len;
 }
 
+vector<SString*> SString::Split(wchar_t separator, bool bRemoveEmptyEntries, bool bTrimEntries)
+{
+    vector<SString*> entries;
+
+    auto AddEntry = [&](size_t seekpos, size_t curr)
+    {
+        size_t begin = seekpos;
+        size_t end = curr;
+
+        if (bTrimEntries)
+        {
+            // 문자열의 양쪽 끝 공백을 제거합니다.
+            for (size_t i = begin; i < end; ++i)
+            {
+                const wchar_t wch = text_buffer[i];
+                if (isspace(wch) != 0)
+                {
+                    ++begin;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            for (size_t i = end - 1; i >= begin; --i)
+            {
+                const wchar_t wch = text_buffer[i];
+                if (isspace(wch) != 0)
+                {
+                    --end;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        // 길이가 0이면 빈 개체입니다.
+        size_t length = end - begin;
+        if (length == 0)
+        {
+            return;
+        }
+
+        entries.emplace_back(new SString(text_buffer + begin, length));
+    };
+
+    size_t seekpos = 0;
+    for (; seekpos < len;)
+    {
+        optional<size_t> curr = IndexOf(separator, seekpos);
+        if (!curr.has_value())
+        {
+            break;
+        }
+
+        AddEntry(seekpos, curr.value());
+        seekpos = curr.value() + 1;
+    }
+
+    // 마지막 남은 부분도 넣습니다.
+    if (seekpos != len)
+    {
+        AddEntry(seekpos, len);
+    }
+
+    return entries;
+}
+
 SString* SString::Format(SString* format)
 {
     std::vector<int> r;

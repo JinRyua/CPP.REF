@@ -4,13 +4,14 @@
 
 #include <sstream>
 #include "Core/String.h"
+#include "Exception/ArgumentException.h"
 
 using namespace std;
 using namespace std::filesystem;
 
 SFileSystemReference::SFileSystemReference(SString* inPath) : Super()
 {
-	myPath = inPath;
+	myPath = GetFullPath(inPath);
 }
 
 SFileSystemReference::~SFileSystemReference()
@@ -18,17 +19,15 @@ SFileSystemReference::~SFileSystemReference()
 
 }
 
-SString* SFileSystemReference::GetRelativePath(SFileSystemReference* inReference) const
+SString* SFileSystemReference::GetFullPath() const
 {
-	// TODO:
-	return nullptr;
+	return myPath;
 }
 
 SString* SFileSystemReference::GetFullPath(SString* path)
 {
-	// TODO:
 	SString* currentDirectory = GetCurrentDirectory();
-	return nullptr;
+	return Combine(currentDirectory, path);
 }
 
 SString* SFileSystemReference::GetCurrentDirectory()
@@ -36,10 +35,12 @@ SString* SFileSystemReference::GetCurrentDirectory()
 	return new SString(current_path().c_str());
 }
 
-bool SFileSystemReference::IsValidPath(SString* path)
+SString* SFileSystemReference::Combine(SString* path1, SString* path2)
 {
-	// TODO:
-	return true;
+	path1 = TrimDirectorySeparator(path1);
+	path2 = TrimDirectorySeparator(path2);
+
+	return SString::Join("\\"_s, path1, path2);
 }
 
 bool SFileSystemReference::IsRootBased(SString* path)
@@ -68,6 +69,7 @@ bool SFileSystemReference::IsRootBased(SString* path)
 SString* SFileSystemReference::NormalizePath(SString* path)
 {
 	path = NormalizePathDirectorySeparator(path);
+	path = NormalizeRelativePath(path);
 	return path;
 }
 
@@ -79,17 +81,24 @@ SString* SFileSystemReference::NormalizePathDirectorySeparator(SString* path)
 	size_t seekpos = 0;
 	for (; seekpos < path->GetLength();)
 	{
-		optional<size_t> indexOf = path->IndexOf(L'\\', seekpos);
+		optional<size_t> indexOf = path->IndexOf(L'/', seekpos);
 		if (indexOf.has_value())
 		{
-			wss << wstring_view(path->C_Str() + seekpos, indexOf.value() - seekpos);
+			wss << wstring_view(path->C_Str() + seekpos, indexOf.value() - seekpos) << L'\\';
 			seekpos = indexOf.value() + 1;
 		}
 
-		// 이 경우 이 문자열에는 \가 존재하지 않습니다.
-		else if (seekpos == 0)
+		else
 		{
-			return path;
+			// 이 경우 이 문자열에는 \가 존재하지 않습니다.
+			if (seekpos == 0)
+			{
+				return path;
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
 
@@ -100,6 +109,111 @@ SString* SFileSystemReference::NormalizePathDirectorySeparator(SString* path)
 	}
 
 	return new SString(wss.str());
+}
+
+SString* SFileSystemReference::NormalizeRelativePath(SString* path)
+{
+	// 이 경로에는 상위 디렉토리로 이동이 포함되어 있지 않습니다.
+	if (!path->IndexOf(".."_s).has_value())
+	{
+		return path;
+	}
+
+	// 이 경로는 깊이가 1입니다.
+	if (!path->IndexOf(DirectorySeparatorChar).has_value())
+	{
+		return path;
+	}
+
+	vector<SString*> splits = path->Split(DirectorySeparatorChar, true, true);
+
+	// 경로에 \..\ 형식만 포함되어 있습니다.
+	if (splits.size() == 1)
+	{
+		return splits[0];
+	}
+
+	vector<SString*> actuals;
+	actuals.reserve(splits.size());
+	for (size_t i = 0; i < splits.size(); ++i)
+	{
+		const wchar_t* c_str = splits[i]->C_Str();
+		size_t len = splits[i]->GetLength();
+
+		// .으로 시작할 경우 무조건 ".."이어야 합니다.
+		if (c_str[0] == L'.')
+		{
+			if (len != 2 || c_str[1] != L'.')
+			{
+				throw new SArgumentException("경로에 올바르지 않은 형식이 있습니다."_s);
+			}
+
+			// 이전 경로가 있을 경우 이전 경로를 제거합니다.
+			if (actuals.size() >= 1)
+			{
+				SString* last = actuals.back();
+				const wchar_t* last_c_str = last->C_Str();
+				size_t len = last->GetLength();
+
+				// 드라이브 루트의 경우 상위로 갈 수 없습니다.
+				if (len == 2 && IsDriveLetter(last_c_str[0]) && last_c_str[1] == L':')
+				{
+					throw new SArgumentException("경로에 올바르지 않은 형식이 있습니다."_s);
+				}
+
+				actuals.erase(--actuals.end());
+			}
+		}
+
+		// 일반적인 경우 경로를 추가합니다.
+		else
+		{
+			actuals.emplace_back(splits[i]);
+		}
+	}
+
+	// 경로 문자열을 다시 조립합니다.
+	return SString::Join("\\"_s, actuals);
+}
+
+SString* SFileSystemReference::TrimDirectorySeparator(SString* path)
+{
+	const wchar_t* c_str = path->C_Str();
+	size_t len = path->GetLength();
+
+	size_t begin = 0;
+	size_t end = len;
+
+	for (size_t i = begin; i < end; ++i)
+	{
+		if (IsDirectorySeparator(c_str[i]))
+		{
+			++begin;
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	for (size_t i = end - 1; i >= begin; --i)
+	{
+		if (IsDirectorySeparator(c_str[i]))
+		{
+			--end;
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	if (begin == 0 && end == len)
+	{
+		return path;
+	}
+
+	return new SString(c_str + begin, end - begin);
 }
 
 bool SFileSystemReference::IsDriveLetter(wchar_t letter)

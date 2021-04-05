@@ -204,6 +204,15 @@ public:
 	size_t GetLength() const;
 
 	/// <summary>
+	/// 문자열을 지정자 단위로 분할합니다.
+	/// </summary>
+	/// <param name="separator"> 분할 지정자를 전달합니다. </param>
+	/// <param name="bRemoveEmptyEntries"> 빈 아이템을 제거합니다. </param>
+	/// <param name="bTrimEntries"> 아이템의 주변 공백을 제거합니다. </param>
+	/// <returns> 문자열 목록이 반환됩니다. </returns>
+	std::vector<SString*> Split(wchar_t separator, bool bRemoveEmptyEntries = false, bool bTrimEntries = false);
+
+	/// <summary>
 	/// 지정 서식을 사용하여 텍스트를 만듭니다.
 	/// </summary>
 	/// <typeparam name="...TArgs"> 매개변수 형식 목록입니다. </typeparam>

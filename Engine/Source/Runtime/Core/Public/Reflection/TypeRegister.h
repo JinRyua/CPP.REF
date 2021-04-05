@@ -6,6 +6,8 @@
 #include <utility>
 #include "Reflection/TypeCollection.h"
 
+#pragma warning(disable: 4275)
+
 namespace Reflection
 {
 	template<size_t N>
@@ -53,6 +55,10 @@ namespace Reflection
 #define SCLASS(ClassType) \
 constexpr Reflection::TypeMetaImpl<class ClassType> REFLECTION_DECLARE_ ## ClassType ## _META(#ClassType, __COUNTER__);\
 __declspec(selectany) Reflection::TypeRegisterImpl<class ClassType> REFLECTION_DECLARE_ ## ClassType ## _REGISTER(REFLECTION_DECLARE_ ## ClassType ## _META);
+
+#define SINTERFACE(InterfaceType) \
+constexpr Reflection::TypeMetaImpl<interface InterfaceType> REFLECTION_DECLARE_ ## InterfaceType ## _META(#InterfaceType, __COUNTER__);\
+__declspec(selectany) Reflection::TypeRegisterImpl<interface InterfaceType> REFLECTION_DECLARE_ ## InterfaceType ## _REGISTER(REFLECTION_DECLARE_ ## InterfaceType ## _META);
 
 #define SCLASS_BODY(ClassType) \
 	friend struct Reflection::TypeMetaImpl<ClassType>;\

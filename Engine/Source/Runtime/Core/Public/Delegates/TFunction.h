@@ -96,10 +96,23 @@ private:
 	};
 
 public:
+	/// <summary>
+	/// 개체를 초기화합니다.
+	/// </summary>
 	TFunction()
 		: Invoker(nullptr)
 	{
 
+	}
+
+	/// <summary>
+	/// 개체를 초기화합니다.
+	/// </summary>
+	/// <param name="Mov"> 이동될 이전 개체 값을 전달합니다. </param>
+	TFunction(TFunction&& Mov) noexcept
+		: Invoker(Mov.Invoker)
+	{
+		Mov.Invoker = nullptr;
 	}
 
 	~TFunction()
@@ -109,12 +122,6 @@ public:
 			delete Invoker;
 			Invoker = nullptr;
 		}
-	}
-
-	TFunction(TFunction&& Mov) noexcept
-		: Invoker(Mov.Invoker)
-	{
-		Mov.Invoker = nullptr;
 	}
 
 	/// <summary>

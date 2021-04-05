@@ -21,8 +21,10 @@ namespace Reflection
 	struct PropertyRegisterBase;
 }
 
-SCLASS(SObject)
-class CORE_API SObject
+/// <summary>
+/// 리플렉션 가능한 모든 클래스에 대한 공통 함수를 제공합니다.
+/// </summary>
+SCLASS(SObject) class CORE_API SObject
 {
 	friend class TypeCollection;
 	friend struct Reflection::TypeMetaImpl<SObject>;

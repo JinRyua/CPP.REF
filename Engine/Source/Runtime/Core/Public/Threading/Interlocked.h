@@ -15,6 +15,17 @@ private:
 	SInterlocked() = delete;
 
 public:
+	/// <summary>
+	/// 64비트 정수형 값을 1 증가시킵니다.
+	/// </summary>
+	/// <param name="value"> 값의 참조를 전달합니다. </param>
+	/// <returns> 증가된 값이 반환됩니다. </returns>
 	static int64 Increment64(int64& value);
+
+	/// <summary>
+	/// 64비트 정수형 값을 1 감소시킵니다.
+	/// </summary>
+	/// <param name="value"> 값의 참조를 전달합니다. </param>
+	/// <returns> 감소된 값이 반환됩니다. </returns>
 	static int64 Decrement64(int64& value);
 };

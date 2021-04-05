@@ -25,9 +25,17 @@ concept TIsFormattableStringConvertible = requires(const T& arg)
 	{ arg.ToString(nullptr) };
 };
 
-interface IStringFormattable : virtual public SObject
+/// <summary>
+/// 서식이 지정된 텍스트 형식을 가져올 수 있는 개체에 대한 공통 인터페이스를 제공합니다.
+/// </summary>
+SINTERFACE(IStringFormattable) interface IStringFormattable : virtual public SObject
 {
 	using SObject::ToString;
 
+	/// <summary>
+	/// 서식을 지정하여 간단한 텍스트 정보를 가져옵니다.
+	/// </summary>
+	/// <param name="formatText"> 서식 문자열을 전달합니다. </param>
+	/// <returns> 생성된 텍스트 개체가 반환됩니다. </returns>
 	virtual SString* ToString(SString* formatText) const = 0;
 };

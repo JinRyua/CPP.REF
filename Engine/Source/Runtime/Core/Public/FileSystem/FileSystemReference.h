@@ -9,7 +9,7 @@ class SString;
 /// <summary>
 /// 파일 시스템에서 특정 경로에 대한 레퍼런스를 탐색합니다.
 /// </summary>
-SCLASS(SFileSystemReference) class SFileSystemReference : virtual public SObject
+SCLASS(SFileSystemReference) class CORE_API SFileSystemReference : virtual public SObject
 {
 	SCLASS_BODY(SFileSystemReference)
 
@@ -28,11 +28,10 @@ public:
 	~SFileSystemReference() override;
 
 	/// <summary>
-	/// 대상 레퍼런스와 상대적 경로를 가져옵니다.
+	/// 전체 경로를 가져옵니다.
 	/// </summary>
-	/// <param name="inReference"> 대상 레퍼런스를 전달합니다. </param>
-	/// <returns> 상대적 경로가 반환됩니다. </returns>
-	SString* GetRelativePath(SFileSystemReference* inReference) const;
+	/// <returns> 전체 경로가 반환됩니다. </returns>
+	SString* GetFullPath() const;
 
 protected:
 	/// <summary>
@@ -48,11 +47,20 @@ protected:
 	/// <returns> 현재 디렉토리 경로가 반환됩니다. </returns>
 	static SString* GetCurrentDirectory();
 
+	/// <summary>
+	/// 두 경로를 조합합니다.
+	/// </summary>
+	/// <param name="path1"> 첫 번째 경로를 전달합니다. </param>
+	/// <param name="path2"> 두 번째 경로를 전달합니다. </param>
+	/// <returns> 조합된 경로가 반환됩니다. </returns>
+	static SString* Combine(SString* path1, SString* path2);
+
 private:
-	static bool IsValidPath(SString* path);
 	static bool IsRootBased(SString* path);
 	static SString* NormalizePath(SString* path);
 	static SString* NormalizePathDirectorySeparator(SString* path);
+	static SString* NormalizeRelativePath(SString* path);
+	static SString* TrimDirectorySeparator(SString* path);
 
 	static bool IsDriveLetter(wchar_t letter);
 	static bool IsDirectorySeparator(wchar_t letter);
