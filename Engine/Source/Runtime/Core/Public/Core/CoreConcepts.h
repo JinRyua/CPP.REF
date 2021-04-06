@@ -116,7 +116,7 @@ concept TIsVectorType = requires(T Arg, const T ConstArg)
 	{ ConstArg.GetComponentOrDefault(0) };
 	{ (bool)ConstArg.Contains(0) };
 	{ (float)ConstArg[0] };
-	{ (size_t)ConstArg.Count };
+	{ (size_t)ConstArg.GetCount() };
 };
 
 template<class T, class O>
@@ -166,9 +166,9 @@ concept TIsMatrixType = requires(T Arg, const T ConstArg)
 	{ (bool)ConstArg.Contains(0, 0) };
 	{ (float)ConstArg[0] };
 	{ (float)ConstArg[0][0] };
-	{ (size_t)ConstArg.Rows };
-	{ (size_t)ConstArg.Columns };
-	{ (size_t)ConstArg.Count };
+	{ (size_t)ConstArg.GetNumRows() };
+	{ (size_t)ConstArg.GetNumColumns() };
+	{ (size_t)ConstArg.GetCount() };
 };
 
 template<class T>

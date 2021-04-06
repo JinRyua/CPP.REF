@@ -36,6 +36,7 @@ public:
 	static bool IsOverlap(const AxisAlignedCube& cube, const AxisAlignedCube& cube2);
 	static bool IsOverlap(const AxisAlignedCube& cube, const Vector3& pt);
 	static bool IsOverlap(const AxisAlignedCube& cube, const Ray3& ray);
+	static bool IsOverlap(const ObjectOrientedCube& cube, const ObjectOrientedCube& cube2);
 
 	static bool QuerySweepRay2Rect(const Ray2& ray, const Rect& rc, SweepResult2D& outSweepResult);
 	static bool QuerySweepRay3AABB(const Ray3& ray, const AxisAlignedCube& aabb, SweepResult3D& outSweepResult);

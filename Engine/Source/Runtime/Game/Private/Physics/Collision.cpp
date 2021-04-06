@@ -47,6 +47,89 @@ bool Collision::IsOverlap(const AxisAlignedCube& cube, const Ray3& ray)
 	return QuerySweepRay3AABB(ray, cube, _);
 }
 
+bool Collision::IsOverlap(const ObjectOrientedCube& cube, const ObjectOrientedCube& cube2)
+{
+	Vector3 Axis[3] = { cube2.AxisX, cube2.AxisY, cube2.AxisZ };
+	float pExtent[3] = { cube2.Extent.X, cube2.Extent.Y, cube2.Extent.Z };
+	Vector3 OtherAxis[3] = { cube.AxisX, cube.AxisY, cube.AxisZ };
+	float pOtherExtent[3] = { cube.Extent.X, cube.Extent.Y, cube.Extent.Z };
+
+	Vector3 abvec = cube.Center - Center;
+
+	Vector3 cofactor[3];
+	Vector3 absCof[3];
+	float a_dot[3];
+
+	// Check A-oriented axes.
+	{
+		for (int i = 0; i < 3; ++i) 		{
+			//
+			// Primary assign primitive values.
+			cofactor[i][0] = Axis[i] | cube.AxisX;
+			cofactor[i][1] = Axis[i] | cube.AxisY;
+			cofactor[i][2] = Axis[i] | cube.AxisZ;
+
+			a_dot[i] = Axis[i] | abvec;
+
+			absCof[i][0] = abs(cofactor[i][0]);
+			absCof[i][1] = abs(cofactor[i][1]);
+			absCof[i][2] = abs(cofactor[i][2]);
+
+			float R = abs(a_dot[i]);
+			float R1 = cube.Extent | Vector3(absCof[i][0], absCof[i][1], absCof[i][2]);
+			float R01 = pExtent[i] + R1;
+
+			if (R > R01) 			{
+				return false;
+			}
+		}
+	}
+
+	// Check B-oriented axes.
+	{
+		for (int i = 0; i < 3; ++i) 		{
+			float R = abs(OtherAxis[i] | abvec);
+			float R0 = cube2.Extent | Vector3(absCof[0][i], absCof[1][i], absCof[2][i]);
+			float R01 = R0 + pOtherExtent[i];
+
+			if (R > R01) 			{
+				return false;
+			}
+		}
+	}
+
+	// Check complex axes.
+	{
+		int OrderA[3] = { 2, 0, 1 };
+		int OrderB[3] = { 1, 2, 0 };
+
+		for (int i = 0; i < 3; ++i) 		{
+			for (int j = 0; j < 3; ++j) 			{
+				float R = abs(
+					a_dot[OrderA[i]] * cofactor[OrderB[i]][j]
+					-
+					a_dot[OrderB[i]] * cofactor[OrderA[i]][j]
+				);
+
+				int nInc = (i == 0) ? 1 : 0;  // 1, 0, 0
+				int nExc = 2 - ((i == 2) ? 1 : 0);  // 2, 2, 1
+				float R0 = pExtent[nInc] * absCof[nExc][j] + pExtent[nExc] * absCof[nInc][j];
+
+				nInc = (j == 0) ? 1 : 0;
+				nExc = 2 - ((j == 2) ? 1 : 0);
+				float R1 = pOtherExtent[nInc] * absCof[i][nExc] + pOtherExtent[nExc] * absCof[i][nInc];
+
+				float R01 = R0 + R1;
+				if (R > R01) 				{
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
 bool Collision::QuerySweepRay2Rect(const Ray2& ray, const Rect& rc, SweepResult2D& outSweepResult)
 {
 	outSweepResult.bBlockingHit = false;

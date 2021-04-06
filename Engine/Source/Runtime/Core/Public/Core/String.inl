@@ -151,26 +151,27 @@ SObject* SString::GetString(T packedArg)
 		{
 			std::wstringstream woss;
 			woss << value;
-			return woss.str().c_str();
+			return new SString(woss.str());
 		}
 
 		virtual SString* ToString(SString* formatText) const
 		{
 			std::wstringstream woss;
-			if (formatText[0] == L'x')
+			const wchar_t* c_str = formatText->C_Str();
+			if (c_str[0] == L'x')
 			{
 				woss << std::hex;
 			}
-			else if (formatText[0] == L'X')
+			else if (c_str[0] == L'X')
 			{
 				woss << std::uppercase << std::hex;
 			}
 
-			if (formatText->Length >= 2)
+			if (formatText->GetLength() >= 2)
 			{
 				size_t pad = 0;
 				std::wistringstream wiss;
-				wiss.str(formatText->C_Str + 1);
+				wiss.str(c_str + 1);
 				wiss >> pad;
 
 				if (pad != 0)
@@ -180,7 +181,7 @@ SObject* SString::GetString(T packedArg)
 			}
 
 			woss << value;
-			return woss.str().c_str();
+			return new SString(woss.str());
 		}
 	};
 
@@ -190,7 +191,7 @@ SObject* SString::GetString(T packedArg)
 template<TIsChar T>
 SObject* SString::GetString(const T* packedArg)
 {
-	return packedArg;
+	return new SString(packedArg);
 }
 
 template<TIsOnlyStringConvertible T>
