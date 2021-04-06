@@ -18,78 +18,29 @@ namespace Reflection
 	template<class T>
 	struct PropertyRegisterImpl : public PropertyRegisterBase
 	{
-		PropertyRegisterImpl(T* inReference)
+		size_t MemberOffset;
+		const char* MemberName;
+
+		PropertyRegisterImpl(size_t memberOffset, const char* memberName)
+			: MemberOffset(memberOffset)
+			, MemberName(memberName)
 		{
 		}
 
 		~PropertyRegisterImpl()
 		{
-		}
-
-		void SafeAddRef()
-		{
-		}
-
-		void SafeRelease()
-		{
-		}
-	};
-
-	template<class TSubclass>
-	struct PropertyRegisterImpl<TSubclass*> : public PropertyRegisterBase
-	{
-		TSubclass** const Reference;
-
-		PropertyRegisterImpl(TSubclass** inReference) : Reference(inReference)
-		{
-
-		}
-
-		~PropertyRegisterImpl()
-		{
-			SafeRelease();
-		}
-
-		void SafeAddRef()
-		{
-			PropertyRegisterBase::SafeAddRef(*Reference);
-		}
-
-		void SafeRelease()
-		{
-			PropertyRegisterBase::SafeRelease(*Reference);
-			*Reference = nullptr;
 		}
 	};
 }
 
+//#define SPROPERTY_MemberOffset(Type, Member) reinterpret_cast<size_t>(&(reinterpret_cast<Type*>(0))->Member)
+#define SPROPERTY_MemberOffset(Type, Member) __builtin_offsetof(Type, Member)
+
 #define SPROPERTY(MemberType, MemberName, ...) \
-	MemberType DECLARE_ ## MemberName = {};\
-	\
-	__declspec(property(get = MemberName ## _get, put = MemberName ## _set)) MemberType MemberName;\
-	MemberType MemberName ## _get() const\
-	{\
-		return DECLARE_ ## MemberName;\
-	}\
-	\
-	void MemberName ## _set(MemberType value)\
-	{\
-		if constexpr (TIsObject<typename TRemovePointer<MemberType>::Type>)\
-		{\
-			REGISTER_ ## MemberName.SafeRelease();\
-			DECLARE_ ## MemberName = value;\
-			REGISTER_ ## MemberName.SafeAddRef();\
-		}\
-		else\
-		{\
-			DECLARE_ ## MemberName = value;\
-		}\
-	}\
+	MemberType MemberName = {};\
 	\
 	template<>\
-	constexpr static bool SPROPERTY_Counter<__COUNTER__ - 1>()\
+	constexpr static Reflection::SPropertyMemberDeclare SPROPERTY_Counter<__COUNTER__ - 1>()\
 	{\
-		return true;\
-	}\
-	\
-	Reflection::PropertyRegisterImpl<MemberType> REGISTER_ ## MemberName = &DECLARE_ ## MemberName;
+		return { SPROPERTY_MemberOffset(This, MemberName), #MemberName };\
+	}

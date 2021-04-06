@@ -42,23 +42,23 @@ namespace Reflection
 		}
 	};
 
-	template<class TClass>
+	template<class TClass, size_t CounterBase>
 	struct TypeRegisterImpl : public TypeCollection::TypeRegisterBase
 	{
 		TypeRegisterImpl(const TypeMetaImpl<TClass>& metaImpl)
 		{
-			TypeCollection::AddType(this, metaImpl);
+			TypeCollection::AddType<CounterBase>(this, metaImpl);
 		}
 	};
 }
 
 #define SCLASS(ClassType) \
 constexpr Reflection::TypeMetaImpl<class ClassType> REFLECTION_DECLARE_ ## ClassType ## _META(#ClassType, __COUNTER__);\
-__declspec(selectany) Reflection::TypeRegisterImpl<class ClassType> REFLECTION_DECLARE_ ## ClassType ## _REGISTER(REFLECTION_DECLARE_ ## ClassType ## _META);
+__declspec(selectany) Reflection::TypeRegisterImpl<class ClassType, REFLECTION_DECLARE_ ## ClassType ## _META.CounterBase> REFLECTION_DECLARE_ ## ClassType ## _REGISTER(REFLECTION_DECLARE_ ## ClassType ## _META);
 
 #define SINTERFACE(InterfaceType) \
 constexpr Reflection::TypeMetaImpl<interface InterfaceType> REFLECTION_DECLARE_ ## InterfaceType ## _META(#InterfaceType, __COUNTER__);\
-__declspec(selectany) Reflection::TypeRegisterImpl<interface InterfaceType> REFLECTION_DECLARE_ ## InterfaceType ## _REGISTER(REFLECTION_DECLARE_ ## InterfaceType ## _META);
+__declspec(selectany) Reflection::TypeRegisterImpl<interface InterfaceType, REFLECTION_DECLARE_ ## InterfaceType ## _META.CounterBase> REFLECTION_DECLARE_ ## InterfaceType ## _REGISTER(REFLECTION_DECLARE_ ## InterfaceType ## _META);
 
 #define SCLASS_BODY(ClassType) \
 	friend struct Reflection::TypeMetaImpl<ClassType>;\
@@ -70,18 +70,18 @@ public:\
 	\
 private:\
 	template<size_t N>\
-	constexpr static bool SPROPERTY_Counter()\
+	constexpr static Reflection::SPropertyMemberDeclare SPROPERTY_Counter()\
 	{\
-		return false;\
+		return { };\
 	}\
 	\
 	template<size_t Counter>\
-	constexpr static auto SPROPERTY_GetPropertyChain()\
+	constexpr static auto SPROPERTY_GetPropertyChainCount()\
 	{\
-		constexpr bool b = SPROPERTY_Counter<Counter>();\
+		constexpr bool b = SPROPERTY_Counter<Counter>().Offset != 0;\
 		if constexpr (b)\
 		{\
-			return SPROPERTY_GetPropertyChain<Counter + 1>();\
+			return SPROPERTY_GetPropertyChainCount<Counter + 1>();\
 		}\
 		else\
 		{\

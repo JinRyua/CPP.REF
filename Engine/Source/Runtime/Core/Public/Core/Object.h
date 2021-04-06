@@ -35,9 +35,15 @@ public:
 	
 private:
 	template<size_t N>
-	constexpr static bool SPROPERTY_Counter()
+	constexpr static Reflection::SPropertyMemberDeclare SPROPERTY_Counter()
 	{
-		return false; 
+		return { };
+	}
+
+	template<size_t Counter>
+	constexpr static auto SPROPERTY_GetPropertyChainCount()
+	{
+		return 0;
 	}
 
 private:

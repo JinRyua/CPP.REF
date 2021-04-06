@@ -6,6 +6,8 @@
 #include <string>
 #include <typeinfo>
 #include <functional>
+#include <array>
+#include <utility>
 #include "Core/CoreConcepts.h"
 #include "Reflection/UniqueType.h"
 
@@ -14,6 +16,27 @@
 class SObject;
 class SType;
 class SString;
+
+namespace Reflection
+{
+	struct SPropertyMemberDeclare
+	{
+		size_t Offset;
+		const char* Name;
+
+		constexpr SPropertyMemberDeclare()
+			: Offset(0)
+			, Name(nullptr)
+		{
+		}
+
+		constexpr SPropertyMemberDeclare(size_t offset, const char* name)
+			: Offset(offset)
+			, Name(name)
+		{
+		}
+	};
+}
 
 /// <summary>
 /// 형식 개체에 대한 컬렉션입니다.
@@ -52,9 +75,12 @@ public:
 	/// </summary>
 	/// <typeparam name="TClassMetaImpl"> 클래스 메타데이터 형식을 전달합니다. </typeparam>
 	/// <param name="classMeta"> 클래스 메타데이터를 전달합니다. </param>
-	template<class TClassRegisterImpl, class TClassMetaImpl>
+	template<size_t CounterBase, class TClassRegisterImpl, class TClassMetaImpl>
 	static void AddType(TClassRegisterImpl* classReg, const TClassMetaImpl& classMeta)
 	{
+		using SClass = typename TClassMetaImpl::This;
+		auto properties = GetTypeProperties<SClass, CounterBase>(std::make_index_sequence<SClass::template SPROPERTY_GetPropertyChainCount<CounterBase>()>{});
+
 		AddType_Impl(classReg, classMeta);
 	}
 
@@ -126,6 +152,12 @@ private:
 	{
 		using TClass = typename TClassMetaImpl::This;
 		AddType(classMeta.pClassName, classMeta.HashCode, typeid(TClassMetaImpl::This), nullptr);
+	}
+
+	template<class SClass, size_t CounterBase, size_t... Indexes>
+	static constexpr std::array<Reflection::SPropertyMemberDeclare, sizeof...(Indexes)> GetTypeProperties(std::index_sequence<Indexes...>&&)
+	{
+		return { SClass::template SPROPERTY_Counter<CounterBase + Indexes>()... };
 	}
 };
 
