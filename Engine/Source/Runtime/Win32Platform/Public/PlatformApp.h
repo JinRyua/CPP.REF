@@ -3,5 +3,8 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/String.h"
-#include "Core/IDisposable.h"
+
+SCLASS(SPlatformApp) class WIN32PLATFORM_API SPlatformApp : virtual public SObject
+{
+
+};
