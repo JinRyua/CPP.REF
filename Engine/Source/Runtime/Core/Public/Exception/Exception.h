@@ -7,7 +7,7 @@
 /// <summary>
 /// 공통 예외 함수를 제공합니다.
 /// </summary>
-SCLASS(SException) class CORE_API SException : virtual public SObject
+class CORE_API SException : virtual public SObject
 {
 	SCLASS_BODY(SException)
 

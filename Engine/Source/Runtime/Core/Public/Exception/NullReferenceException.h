@@ -7,7 +7,7 @@
 /// <summary>
 /// 널 레퍼런스를 역참조 시도할 때 발생하는 예외입니다.
 /// </summary>
-SCLASS(SNullReferenceException) class CORE_API SNullReferenceException : public SException
+class CORE_API SNullReferenceException : public SException
 {
 	SCLASS_BODY(SNullReferenceException)
 

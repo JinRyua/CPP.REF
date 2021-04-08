@@ -7,7 +7,7 @@
 /// <summary>
 /// 매개변수 예외 함수를 제공합니다.
 /// </summary>
-SCLASS(SArgumentException) class CORE_API SArgumentException : public SException
+class CORE_API SArgumentException : public SException
 {
 	SCLASS_BODY(SArgumentException)
 

@@ -8,11 +8,12 @@
 #include <functional>
 #include "String.h"
 #include "Delegates/TFunction.h"
+#include "Reflection/TypeCollection.h"
 
 /// <summary>
 /// 개체의 형식에 관한 리플렉션을 지원합니다.
 /// </summary>
-SCLASS(SType) class CORE_API SType : virtual public SObject
+class CORE_API SType : virtual public SObject
 {
 	SCLASS_BODY(SType)
 
@@ -21,9 +22,8 @@ SCLASS(SType) class CORE_API SType : virtual public SObject
 private:
 	const char* className;
 	size_t hashCode;
-	size_t rttiType;
 	std::function<SObject*()> activator;
-	size_t propertyCount;
+	std::vector<Reflection::SPropertyMemberDeclare> memberDeclares;
 
 	SPROPERTY(SString*, classNameObj);
 
@@ -42,12 +42,6 @@ public:
 	/// </summary>
 	/// <returns> 해시 코드 값이 반환됩니다. </returns>
 	size_t GetHashCode() const override;
-
-	/// <summary>
-	/// 형식의 RTTI 해시 코드 값을 가져옵니다.
-	/// </summary>
-	/// <returns> 해시 코드 값이 반환됩니다. </returns>
-	size_t GetRTTIHashCode() const;
 
 	/// <summary>
 	/// 형식의 간단한 이름을 문자열로 가져옵니다.

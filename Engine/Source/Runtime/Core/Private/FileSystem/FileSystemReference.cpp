@@ -1,13 +1,20 @@
 ﻿// Copyright 2020-2021 Aumoa.lib. All right reserved.
 
 #include "FileSystem/FileSystemReference.h"
+SCLASS_BODY_IMPL(SFileSystemReference);
 
 #include <sstream>
 #include "Core/String.h"
 #include "Exception/ArgumentException.h"
+#include "Exception/InvalidOperationException.h"
 
 using namespace std;
 using namespace std::filesystem;
+
+SFileSystemReference::SFileSystemReference() : Super()
+{
+	throw new SInvalidOperationException("표준 생성자는 지원하지 않습니다."_s);
+}
 
 SFileSystemReference::SFileSystemReference(SString* inPath) : Super()
 {

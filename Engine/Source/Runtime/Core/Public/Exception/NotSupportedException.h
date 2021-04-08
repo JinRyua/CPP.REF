@@ -7,7 +7,7 @@
 /// <summary>
 /// 지원하지 않는 기능을 사용하려 했을 때 발생하는 예외입니다.
 /// </summary>
-SCLASS(SNotSupportedException) class CORE_API SNotSupportedException : public SException
+class CORE_API SNotSupportedException : public SException
 {
 	SCLASS_BODY(SNotSupportedException)
 

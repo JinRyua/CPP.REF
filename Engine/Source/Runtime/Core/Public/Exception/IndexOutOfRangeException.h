@@ -7,7 +7,7 @@
 /// <summary>
 /// 인덱스가 범위를 벗어났을 때 발생하는 예외입니다.
 /// </summary>
-SCLASS(SIndexOutOfRangeException) class CORE_API SIndexOutOfRangeException : public SException
+class CORE_API SIndexOutOfRangeException : public SException
 {
 	SCLASS_BODY(SIndexOutOfRangeException)
 

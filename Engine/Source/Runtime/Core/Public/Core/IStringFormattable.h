@@ -28,7 +28,7 @@ concept TIsFormattableStringConvertible = requires(const T& arg)
 /// <summary>
 /// 서식이 지정된 텍스트 형식을 가져올 수 있는 개체에 대한 공통 인터페이스를 제공합니다.
 /// </summary>
-SINTERFACE(IStringFormattable) interface IStringFormattable : virtual public SObject
+interface IStringFormattable : virtual public SObject
 {
 	using SObject::ToString;
 

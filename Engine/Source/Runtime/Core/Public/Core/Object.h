@@ -4,8 +4,7 @@
 
 #include "CoreConcepts.h"
 #include "WeakReferences.h"
-#include "Reflection/TypeRegister.h"
-#include "Reflection/PropertyRegister.h"
+#include "Reflection/ReflectionMacros.h"
 
 class SObject;
 class SString;
@@ -24,27 +23,13 @@ namespace Reflection
 /// <summary>
 /// 리플렉션 가능한 모든 클래스에 대한 공통 함수를 제공합니다.
 /// </summary>
-SCLASS(SObject) class CORE_API SObject
+class CORE_API SObject
 {
-	friend class TypeCollection;
-	friend struct Reflection::TypeMetaImpl<SObject>;
-	friend struct Reflection::PropertyRegisterBase;
-
 public:
 	using This = SObject;
-	
-private:
-	template<size_t N>
-	constexpr static Reflection::SPropertyMemberDeclare SPROPERTY_Counter()
-	{
-		return { };
-	}
+	friend class TypeCollection;
 
-	template<size_t Counter>
-	constexpr static auto SPROPERTY_GetPropertyChainCount()
-	{
-		return 0;
-	}
+	SCLASS_BODY(SObject);
 
 private:
 	template<TIsNotPointer T, bool bThreadSafe>

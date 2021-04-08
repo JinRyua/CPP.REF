@@ -5,12 +5,12 @@
 #undef interface
 #include <Windows.h>
 
-int64 SInterlocked::Increment64(int64& value)
+int64 Interlocked::Increment64(int64& value)
 {
 	return InterlockedIncrement64((volatile long long*)&value);
 }
 
-int64 SInterlocked::Decrement64(int64& value)
+int64 Interlocked::Decrement64(int64& value)
 {
 	return InterlockedDecrement64((volatile long long*)&value);
 }

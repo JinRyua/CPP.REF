@@ -7,7 +7,7 @@
 /// <summary>
 /// IO 기능 수행 중 발생한 예외 정보를 제공합니다.
 /// </summary>
-SCLASS(SIOException) class CORE_API SIOException : public SException
+class CORE_API SIOException : public SException
 {
 	SCLASS_BODY(SIOException)
 

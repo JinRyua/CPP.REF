@@ -7,7 +7,7 @@
 /// <summary>
 /// 잘못된 연산을 수행하였을 때 발생하는 예외입니다.
 /// </summary>
-SCLASS(SInvalidOperationException) class CORE_API SInvalidOperationException : public SException
+class CORE_API SInvalidOperationException : public SException
 {
 	SCLASS_BODY(SInvalidOperationException)
 

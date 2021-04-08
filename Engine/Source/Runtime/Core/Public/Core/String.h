@@ -35,7 +35,7 @@ using StringIterator = TItem*;
 /// <summary>
 /// 수정 불가능한 문자열 개체를 표현합니다.
 /// </summary>
-SCLASS(SString) class CORE_API SString final : virtual public SObject
+class CORE_API SString final : virtual public SObject
 {
 	SCLASS_BODY(SString)
 

@@ -9,7 +9,7 @@ class SString;
 /// <summary>
 /// 파일 시스템에서 특정 경로에 대한 레퍼런스를 탐색합니다.
 /// </summary>
-SCLASS(SFileSystemReference) class CORE_API SFileSystemReference : virtual public SObject
+class CORE_API SFileSystemReference : virtual public SObject
 {
 	SCLASS_BODY(SFileSystemReference)
 
@@ -18,6 +18,9 @@ private:
 	static constexpr const wchar_t DirectorySeparatorChar = L'\\';
 
 	SPROPERTY(SString*, myPath);
+
+private:
+	SFileSystemReference();
 
 public:
 	/// <summary>

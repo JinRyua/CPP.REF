@@ -7,7 +7,7 @@
 /// <summary>
 /// 서식 지정 중 서식에 잘못된 형식이 포함되었을 경우 발생하는 예외입니다.
 /// </summary>
-SCLASS(SFormatException) class CORE_API SFormatException : public SException
+class CORE_API SFormatException : public SException
 {
 	SCLASS_BODY(SFormatException)
 

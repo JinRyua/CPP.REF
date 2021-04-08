@@ -13,6 +13,58 @@
 size_t SObject::ObjCount;
 #endif
 
+template<size_t Index>
+consteval auto SObject::TypeRegisterImpl::GetPropertyCountImpl()
+{
+	constexpr bool b = SObject::template SPROPERTY_GetPropertyCounter<Index>() != nullptr;
+	if constexpr (b)
+	{
+		return GetPropertyCountImpl<Index + 1>();
+	}
+	else
+	{
+		return Index - CounterBase;
+	}
+}
+
+consteval size_t SObject::TypeRegisterImpl::GetPropertyCount()
+{
+	return GetPropertyCountImpl<CounterBase>();
+}
+
+template<size_t Count>
+consteval auto SObject::TypeRegisterImpl::GetPropertyChain() -> std::array<SPROPERTY_CounterFunctionCall, Count>
+{
+	return GetPropertyChainImpl(std::make_index_sequence<Count>{});
+}
+
+template<size_t... Indexes>
+consteval auto SObject::TypeRegisterImpl::GetPropertyChainImpl(std::index_sequence<Indexes...>&&) -> std::array<SPROPERTY_CounterFunctionCall, sizeof...(Indexes)>
+{
+	return { SObject::template SPROPERTY_GetPropertyCounter<Indexes>()... };
+}
+
+SObject::TypeRegisterImpl::TypeRegisterImpl()
+{
+	RttiTypeId = typeid(This).hash_code();
+	ClassName = Name;
+	TypeToObject = Reflection::TypeToObject<This>();
+	Activator = []() { return new This(); };
+	SuperClass = nullptr;
+	
+	constexpr static auto PropertyChain = GetPropertyChain<GetPropertyCount()>();
+	MemberDeclares.reserve(PropertyChain.size());
+	
+	for (size_t i = 0; i < PropertyChain.size(); ++i)
+	{
+		MemberDeclares.emplace_back(PropertyChain[i]());
+	}
+
+	Register();
+}
+
+SObject::TypeRegisterImpl SObject::TypeRegister;
+
 SObject::SObject() : This(false)
 {
 
@@ -38,7 +90,7 @@ SObject::~SObject()
 		ReferenceCollector::RemoveReference(this);
 
 #if WITH_DEBUG
-		SInterlocked::Decrement64((int64&)ObjCount);
+		Interlocked::Decrement64((int64&)ObjCount);
 #endif
 	}
 }
@@ -60,7 +112,7 @@ size_t SObject::GetHashCode() const
 
 SType* SObject::GetType() const
 {
-	return TypeCollection::GetTypeByRTTI(typeid(*this));
+	return TypeCollection::GetType(typeid(*this));
 }
 
 bool SObject::operator ==(SObject* right) const
@@ -91,12 +143,12 @@ void SObject::Release()
 
 void SObject::AddRefInterlocked()
 {
-	SInterlocked::Increment64((int64&)ref_count);
+	Interlocked::Increment64((int64&)ref_count);
 }
 
 void SObject::ReleaseInterlocked()
 {
-	size_t decremented = (size_t)SInterlocked::Decrement64((int64&)ref_count);
+	size_t decremented = (size_t)Interlocked::Decrement64((int64&)ref_count);
 	if (decremented == 0)
 	{
 		if (!bLockCollecting)
@@ -140,7 +192,7 @@ SObject::SObject(bool bNoReferenceCollect)
 		ReferenceCollector::AddReference(this);
 
 #if WITH_DEBUG
-		SInterlocked::Increment64((int64&)ObjCount);
+		Interlocked::Increment64((int64&)ObjCount);
 #endif
 	}
 }

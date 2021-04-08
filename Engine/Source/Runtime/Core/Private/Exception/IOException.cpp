@@ -1,6 +1,7 @@
 ﻿// Copyright 2020-2021 Aumoa.lib. All right reserved.
 
 #include "Exception/IOException.h"
+SCLASS_BODY_IMPL(SIOException);
 
 #include "Core/String.h"
 

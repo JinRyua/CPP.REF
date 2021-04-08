@@ -1,6 +1,7 @@
 ﻿// Copyright 2020-2021 Aumoa.lib. All right reserved.
 
 #include "Core/String.h"
+SCLASS_BODY_IMPL(SString);
 
 #undef interface
 #include <Windows.h>

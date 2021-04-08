@@ -1,6 +1,7 @@
 ﻿// Copyright 2020-2021 Aumoa.lib. All right reserved.
 
 #include "Exception/ArgumentException.h"
+SCLASS_BODY_IMPL(SArgumentException);
 
 #include "Core/String.h"
 

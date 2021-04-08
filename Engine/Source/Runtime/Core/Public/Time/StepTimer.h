@@ -10,7 +10,7 @@
 /// <summary>
 /// 간단한 시간 측정 기능을 제공하는 클래스입니다.
 /// </summary>
-SCLASS(SStepTimer) class CORE_API SStepTimer : virtual public SObject
+class CORE_API SStepTimer : virtual public SObject
 {
 	SCLASS_BODY(SStepTimer)
 

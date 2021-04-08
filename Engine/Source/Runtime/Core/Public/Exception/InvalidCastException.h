@@ -7,7 +7,7 @@
 /// <summary>
 /// 잘못된 형식 변환을 시도하였을 때 발생하는 예외입니다.
 /// </summary>
-SCLASS(SInvalidCastException) class CORE_API SInvalidCastException : public SException
+class CORE_API SInvalidCastException : public SException
 {
 	SCLASS_BODY(SInvalidCastException)
 

@@ -1,6 +1,7 @@
 ﻿// Copyright 2020-2021 Aumoa.lib. All right reserved.
 
 #include "Exception/Exception.h"
+SCLASS_BODY_IMPL(SException);
 
 #include "Core/String.h"
 

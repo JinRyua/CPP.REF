@@ -1,6 +1,7 @@
 ﻿// Copyright 2020-2021 Aumoa.lib. All right reserved.
 
 #include "Core/Type.h"
+SCLASS_BODY_IMPL(SType);
 
 SType::SType() : Super(true)
 {
@@ -22,11 +23,6 @@ size_t SType::GetHashCode() const
 	return hashCode;
 }
 
-size_t SType::GetRTTIHashCode() const
-{
-	return rttiType;
-}
-
 const char* SType::GetNativeString() const
 {
 	return className;
@@ -34,7 +30,7 @@ const char* SType::GetNativeString() const
 
 size_t SType::GetPropertyCount() const
 {
-	return propertyCount;
+	return memberDeclares.size();
 }
 
 SObject* SType::Activate()

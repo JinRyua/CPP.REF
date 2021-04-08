@@ -7,12 +7,10 @@
 /// <summary>
 /// 스레드 안전한 원자 연산을 수행하는 함수를 제공합니다.
 /// </summary>
-SCLASS(SInterlocked) class CORE_API SInterlocked : virtual public SObject
+class CORE_API Interlocked : virtual public SObject
 {
-	SCLASS_BODY(SInterlocked)
-
 private:
-	SInterlocked() = delete;
+	Interlocked() = delete;
 
 public:
 	/// <summary>

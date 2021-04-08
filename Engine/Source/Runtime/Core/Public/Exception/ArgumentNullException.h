@@ -7,7 +7,7 @@
 /// <summary>
 /// 널 매개변수를 허용하지 않는 곳에 널 매개변수를 전달했을 때 발생하는 예외입니다. 
 /// </summary>
-SCLASS(SArgumentNullException) class CORE_API SArgumentNullException : public SArgumentException
+class CORE_API SArgumentNullException : public SArgumentException
 {
 	SCLASS_BODY(SArgumentNullException)
 

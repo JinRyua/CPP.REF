@@ -1,6 +1,7 @@
 ﻿// Copyright 2020-2021 Aumoa.lib. All right reserved.
 
 #include "Exception/IndexOutOfRangeException.h"
+SCLASS_BODY_IMPL(SIndexOutOfRangeException);
 
 #include "Core/String.h"
 
