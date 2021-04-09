@@ -31,15 +31,22 @@ void TypeCollection::TypeRegisterBase::Register()
 	typeCollection->emplace(RttiTypeId, type);
 	nameToType->emplace(ClassName, RttiTypeId);
 
+	TypeRegisterBase* parent = this;
+
+	for (; parent != nullptr;)
+	{
+		type->memberDeclares.insert(type->memberDeclares.end(), parent->MemberDeclares.begin(), parent->MemberDeclares.end());
+		parent = parent->SuperClass;
+	}
+
 	type->className = ClassName;
 	type->hashCode = RttiTypeId;
 	type->activator = Activator;
-	type->memberDeclares = MemberDeclares;
 }
 
-SType* TypeCollection::GetType(const type_info& rtti)
+SType* TypeCollection::GetType(size_t rtti)
 {
-	if (auto it = TypeRegisterBase::typeCollection->find(rtti.hash_code()); it != TypeRegisterBase::typeCollection->end())
+	if (auto it = TypeRegisterBase::typeCollection->find(rtti); it != TypeRegisterBase::typeCollection->end())
 	{
 		return it->second;
 	}
@@ -53,7 +60,7 @@ SType* TypeCollection::GetTypeByName(const char* typeName)
 {
 	if (auto it = TypeRegisterBase::nameToType->find(typeName); it != TypeRegisterBase::nameToType->end())
 	{
-		return TypeRegisterBase::typeCollection->at(it->second);
+		return GetType(it->second);
 	}
 	else
 	{

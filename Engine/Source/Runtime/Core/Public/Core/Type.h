@@ -7,7 +7,6 @@
 #include <typeinfo>
 #include <functional>
 #include "String.h"
-#include "Delegates/TFunction.h"
 #include "Reflection/TypeCollection.h"
 
 /// <summary>
@@ -24,11 +23,12 @@ private:
 	size_t hashCode;
 	std::function<SObject*()> activator;
 	std::vector<Reflection::SPropertyMemberDeclare> memberDeclares;
+	size_t superRtti;
 
-	SPROPERTY(SString*, classNameObj);
+private:
+	SType();
 
 public:
-	SType();
 	~SType() override;
 
 	/// <summary>
@@ -60,6 +60,12 @@ public:
 	/// </summary>
 	/// <returns> 생성된 개체가 반환됩니다. </returns>
 	SObject* Activate();
+
+	/// <summary>
+	/// 이 클래스의 상위 클래스를 가져옵니다.
+	/// </summary>
+	/// <returns> 상위 클래스 형식이 반환됩니다. </returns>
+	SType* GetSuper() const;
 
 	static void* operator new(size_t length);
 };

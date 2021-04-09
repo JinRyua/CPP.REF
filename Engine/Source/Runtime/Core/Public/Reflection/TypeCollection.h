@@ -72,7 +72,17 @@ public:
 	/// </summary>
 	/// <param name="rtti"> RTTI 형식을 전달합니다. </param>
 	/// <returns> 형식 정보 개체가 반환됩니다. </returns>
-	static SType* GetType(const std::type_info& rtti);
+	static SType* GetType(const std::type_info& rtti)
+	{
+		return GetType(rtti.hash_code());
+	}
+
+	/// <summary>
+	/// 고유 형식 정보를 가져옵니다.
+	/// </summary>
+	/// <param name="rtti"> RTTI 형식을 전달합니다. </param>
+	/// <returns> 형식 정보 개체가 반환됩니다. </returns>
+	static SType* GetType(size_t rtti);
 
 	/// <summary>
 	/// 고유 형식 정보를 가져옵니다.
