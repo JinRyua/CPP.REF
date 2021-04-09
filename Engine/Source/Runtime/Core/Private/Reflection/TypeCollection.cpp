@@ -4,6 +4,7 @@
 
 #include <utility>
 #include "Core/Type.h"
+#include "Core/String.h"
 
 using namespace std;
 
@@ -31,6 +32,12 @@ void TypeCollection::TypeRegisterBase::Register()
 	typeCollection->emplace(RttiTypeId, type);
 	nameToType->emplace(ClassName, RttiTypeId);
 
+	type->hashCode = RttiTypeId;
+	type->className = ClassName;
+	type->typeToObject = TypeToObject;
+	type->objectToType = ObjectToType;
+	type->activator = Activator;
+
 	TypeRegisterBase* parent = this;
 
 	for (; parent != nullptr;)
@@ -39,9 +46,7 @@ void TypeCollection::TypeRegisterBase::Register()
 		parent = parent->SuperClass;
 	}
 
-	type->className = ClassName;
-	type->hashCode = RttiTypeId;
-	type->activator = Activator;
+	type->RegisterFields();
 }
 
 SType* TypeCollection::GetType(size_t rtti)

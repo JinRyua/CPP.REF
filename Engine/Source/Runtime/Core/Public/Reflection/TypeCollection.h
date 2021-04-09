@@ -24,13 +24,39 @@ namespace Reflection
 	{
 		size_t Offset;
 		const char* Name;
-		std::optional<ssize_t> TypeToObject;
+		std::function<SObject*(void*)> TypeToObject;
+		std::function<void*(SObject*)> ObjectToType;
+		size_t FieldType;
 	};
 
 	template<class T>
-	ssize_t TypeToObject()
+	std::function<SObject*(void*)> TypeToObject()
 	{
-		return reinterpret_cast<ssize_t>(static_cast<SObject*>((T*)0));
+		static auto Caster = [](void* ptr)
+		{
+			T* typed = reinterpret_cast<T*>(ptr);
+			return typed;
+		};
+
+		return Caster;
+	}
+
+	template<class T>
+	std::function<void*(SObject*)> ObjectToType()
+	{
+		static auto Caster = [](SObject* ptr)
+		{
+			T* typed = dynamic_cast<T*>(ptr);
+			return reinterpret_cast<void*>(typed);
+		};
+
+		return Caster;
+	}
+
+	template<class T>
+	size_t Typeid()
+	{
+		return typeid(T).hash_code();
 	}
 }
 
@@ -53,7 +79,8 @@ public:
 	public:
 		size_t RttiTypeId;
 		const char* ClassName;
-		size_t TypeToObject;
+		std::function<SObject*(void*)> TypeToObject;
+		std::function<void*(SObject*)> ObjectToType;
 		std::vector<Reflection::SPropertyMemberDeclare> MemberDeclares;
 		std::function<SObject* ()> Activator;
 		TypeRegisterBase* SuperClass;

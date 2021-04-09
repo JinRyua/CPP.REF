@@ -88,6 +88,7 @@ ClassType::TypeRegisterImpl::TypeRegisterImpl()\
 	RttiTypeId = typeid(This).hash_code();\
 	ClassName = Name;\
 	TypeToObject = Reflection::TypeToObject<This>();\
+	ObjectToType = Reflection::ObjectToType<This>();\
 	Activator = []() { return new This(); };\
 	SuperClass = &Super::TypeRegister;\
 	\
@@ -110,9 +111,16 @@ ClassType::TypeRegisterImpl ClassType::TypeRegister;
 	template<>\
 	static Reflection::SPropertyMemberDeclare SPROPERTY_GetPropertyChain<Counter - TypeRegisterImpl::CounterBase - 1>()\
 	{\
-		if constexpr (TIsObject<typename TRemovePointer<VarType>::Type>)\
+		if constexpr (TIsPointer<VarType>::Value)\
 		{\
-			return { .Offset = __builtin_offsetof(This, VarName), .Name = #VarName, .TypeToObject = Reflection::TypeToObject<This>() };\
+			return \
+			{\
+				.Offset = __builtin_offsetof(This, VarName),\
+				.Name = #VarName,\
+				.TypeToObject = Reflection::TypeToObject<typename TRemovePointer<VarType>::Type>(),\
+				.ObjectToType = Reflection::ObjectToType<typename TRemovePointer<VarType>::Type>(),\
+				.FieldType = Reflection::Typeid<typename TRemovePointer<VarType>::Type>()\
+			};\
 		}\
 		else\
 		{\

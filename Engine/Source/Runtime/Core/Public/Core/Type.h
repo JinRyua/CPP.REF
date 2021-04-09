@@ -6,8 +6,10 @@
 
 #include <typeinfo>
 #include <functional>
-#include "String.h"
 #include "Reflection/TypeCollection.h"
+
+class SField;
+class SString;
 
 /// <summary>
 /// 개체의 형식에 관한 리플렉션을 지원합니다.
@@ -17,13 +19,18 @@ class CORE_API SType : virtual public SObject
 	SCLASS_BODY(SType)
 
 	friend class TypeCollection;
+	friend class SField;
 
 private:
-	const char* className;
 	size_t hashCode;
-	std::function<SObject*()> activator;
+	const char* className;
+	std::function<SObject*(void*)> typeToObject;
+	std::function<void*(SObject*)> objectToType;
 	std::vector<Reflection::SPropertyMemberDeclare> memberDeclares;
+	std::function<SObject*()> activator;
 	size_t superRtti;
+
+	std::vector<SField*> fields;
 
 private:
 	SType();
@@ -67,5 +74,22 @@ public:
 	/// <returns> 상위 클래스 형식이 반환됩니다. </returns>
 	SType* GetSuper() const;
 
+	/// <summary>
+	/// 형식에 정의된 필드를 가져옵니다.
+	/// </summary>
+	/// <param name="name"> 필드 이름을 전달합니다. </param>
+	/// <returns> 형식 개체가 반환됩니다. </returns>
+	SField* GetField(const char* name);
+
+	/// <summary>
+	/// 형식에 정의된 필드를 가져옵니다.
+	/// </summary>
+	/// <param name="name"> 필드 이름을 전달합니다. </param>
+	/// <returns> 형식 개체가 반환됩니다. </returns>
+	SField* GetField(SString* name);
+
 	static void* operator new(size_t length);
+
+private:
+	void RegisterFields();
 };
