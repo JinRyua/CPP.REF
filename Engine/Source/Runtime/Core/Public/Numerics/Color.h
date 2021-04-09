@@ -5,6 +5,7 @@
 #include "TNumericsBasicOperator.h"
 
 #include <map>
+#include <string_view>
 #include "Core/CoreConcepts.h"
 
 class SString;
@@ -171,6 +172,13 @@ public:
 	/// <param name="html"> 텍스트 값을 전달합니다. </param>
 	/// <returns> 색상 값이 반환됩니다. </returns>
 	static Color FromHtml(SString* html);
+
+	/// <summary>
+	/// HTML 텍스트에서 색상 값을 생성합니다.
+	/// </summary>
+	/// <param name="html"> 텍스트 값을 전달합니다. </param>
+	/// <returns> 색상 값이 반환됩니다. </returns>
+	static Color FromHtml(std::string_view html);
 
 	/// <summary>
 	/// 바이트 값에서 색상 값을 생성합니다.

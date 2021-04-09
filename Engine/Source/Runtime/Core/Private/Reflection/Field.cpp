@@ -7,14 +7,12 @@ SCLASS_BODY_IMPL(SField);
 #include "Core/Type.h"
 #include "Exception/InvalidCastException.h"
 
-inline ssize_t& GetFieldPointer(void* ptr, ssize_t offset)
+inline size_t& GetFieldPointer(void* ptr, ssize_t offset)
 {
-	int8* ptroff = (int8*)ptr;
-	int8* moved = ptroff + offset;
-	return *(ssize_t*)moved;
+	return *(size_t*)((int8*)ptr + offset);
 }
 
-SField::SField() : Super()
+SField::SField() : Super(true)
 	, fieldName(nullptr)
 	, fieldToType(0)
 	, rttiType(0)
@@ -28,7 +26,7 @@ SField::~SField()
 
 SType* SField::GetFieldType() const
 {
-	return TypeCollection::GetType(rttiType);
+	return GetCachedType();
 }
 
 SString* SField::GetFieldName() const
@@ -39,7 +37,7 @@ SString* SField::GetFieldName() const
 void SField::SetValue(SObject* instance, SObject* value)
 {
 	void* instance_ptr = parent->objectToType(instance);
-	ssize_t& fieldPtr = GetFieldPointer(instance_ptr, fieldToType);
+	size_t& fieldPtr = GetFieldPointer(instance_ptr, fieldToType);
 	fieldPtr = (size_t)objectToType(value);
 }
 
@@ -52,7 +50,7 @@ SObject* SField::GetValue(SObject* instance) const
 	}
 
 	void* instance_ptr = parent->objectToType(instance);
-	ssize_t& fieldPtr = GetFieldPointer(instance, fieldToType);
+	size_t& fieldPtr = GetFieldPointer(instance_ptr, fieldToType);
 	return typeToObject((void*)fieldPtr);
 }
 

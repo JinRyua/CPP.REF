@@ -10,4 +10,5 @@ class HashHelper abstract final
 
 public:
 	static size_t GetHashCode(float value);
+	static size_t GetHashCode(const char* name);
 };

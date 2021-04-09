@@ -10,147 +10,147 @@ using namespace std;
 
 map<size_t, Color> Color::convertTable =
 {
-	{ "AliceBlue"_s->GetHashCode(), Color::FromHtml("#F0F8FF"_s) },
-	{ "AntiqueWhite"_s->GetHashCode(), Color::FromHtml("#FAEBD7"_s) },
-	{ "Aqua"_s->GetHashCode(), Color::FromHtml("#00FFFF"_s) },
-	{ "Aquamarine"_s->GetHashCode(), Color::FromHtml("#7FFFD4"_s) },
-	{ "Azure"_s->GetHashCode(), Color::FromHtml("#F0FFFF"_s) },
-	{ "Beige"_s->GetHashCode(), Color::FromHtml("#F5F5DC"_s) },
-	{ "Bisque"_s->GetHashCode(), Color::FromHtml("#FFE4C4"_s) },
-	{ "Black"_s->GetHashCode(), Color::FromHtml("#000000"_s) },
-	{ "BlanchedAlmond"_s->GetHashCode(), Color::FromHtml("#FFEBCD"_s) },
-	{ "Blue"_s->GetHashCode(), Color::FromHtml("#0000FF"_s) },
-	{ "BlueViolet"_s->GetHashCode(), Color::FromHtml("#8A2BE2"_s) },
-	{ "Brown"_s->GetHashCode(), Color::FromHtml("#A52A2A"_s) },
-	{ "BurlyWood"_s->GetHashCode(), Color::FromHtml("#DEB887"_s) },
-	{ "CadetBlue"_s->GetHashCode(), Color::FromHtml("#5F9EA0"_s) },
-	{ "Chartreuse"_s->GetHashCode(), Color::FromHtml("#7FFF00"_s) },
-	{ "Chocolate"_s->GetHashCode(), Color::FromHtml("#D2691E"_s) },
-	{ "Coral"_s->GetHashCode(), Color::FromHtml("#FF7F50"_s) },
-	{ "CornflowerBlue"_s->GetHashCode(), Color::FromHtml("#6495ED"_s) },
-	{ "Cornsilk"_s->GetHashCode(), Color::FromHtml("#FFF8DC"_s) },
-	{ "Crimson"_s->GetHashCode(), Color::FromHtml("#DC143C"_s) },
-	{ "Cyan"_s->GetHashCode(), Color::FromHtml("#00FFFF"_s) },
-	{ "DarkBlue"_s->GetHashCode(), Color::FromHtml("#00008B"_s) },
-	{ "DarkCyan"_s->GetHashCode(), Color::FromHtml("#008B8B"_s) },
-	{ "DarkGoldenrod"_s->GetHashCode(), Color::FromHtml("#B8860B"_s) },
-	{ "DarkGray"_s->GetHashCode(), Color::FromHtml("#A9A9A9"_s) },
-	{ "DarkGreen"_s->GetHashCode(), Color::FromHtml("#006400"_s) },
-	{ "DarkKhaki"_s->GetHashCode(), Color::FromHtml("#BDB76B"_s) },
-	{ "DarkMagenta"_s->GetHashCode(), Color::FromHtml("#8B008B"_s) },
-	{ "DarkOliveGreen"_s->GetHashCode(), Color::FromHtml("#556B2F"_s) },
-	{ "DarkOrange"_s->GetHashCode(), Color::FromHtml("#FF8C00"_s) },
-	{ "DarkOrchid"_s->GetHashCode(), Color::FromHtml("#9932CC"_s) },
-	{ "DarkRed"_s->GetHashCode(), Color::FromHtml("#8B0000"_s) },
-	{ "DarkSalmon"_s->GetHashCode(), Color::FromHtml("#E9967A"_s) },
-	{ "DarkSeaGreen"_s->GetHashCode(), Color::FromHtml("#8FBC8B"_s) },
-	{ "DarkSlateBlue"_s->GetHashCode(), Color::FromHtml("#483D8B"_s) },
-	{ "DarkSlateGray"_s->GetHashCode(), Color::FromHtml("#2F4F4F"_s) },
-	{ "DarkTurquoise"_s->GetHashCode(), Color::FromHtml("#00CED1"_s) },
-	{ "DarkViolet"_s->GetHashCode(), Color::FromHtml("#9400D3"_s) },
-	{ "DeepPink"_s->GetHashCode(), Color::FromHtml("#FF1493"_s) },
-	{ "DeepSkyBlue"_s->GetHashCode(), Color::FromHtml("#00BFFF"_s) },
-	{ "DimGray"_s->GetHashCode(), Color::FromHtml("#696969"_s) },
-	{ "DodgerBlue"_s->GetHashCode(), Color::FromHtml("#1E90FF"_s) },
-	{ "Firebrick"_s->GetHashCode(), Color::FromHtml("#B22222"_s) },
-	{ "FloralWhite"_s->GetHashCode(), Color::FromHtml("#FFFAF0"_s) },
-	{ "ForestGreen"_s->GetHashCode(), Color::FromHtml("#228B22"_s) },
-	{ "Fuchsia"_s->GetHashCode(), Color::FromHtml("#FF00FF"_s) },
-	{ "Gainsboro"_s->GetHashCode(), Color::FromHtml("#DCDCDC"_s) },
-	{ "GhostWhite"_s->GetHashCode(), Color::FromHtml("#F8F8FF"_s) },
-	{ "Gold"_s->GetHashCode(), Color::FromHtml("#FFD700"_s) },
-	{ "Goldenrod"_s->GetHashCode(), Color::FromHtml("#DAA520"_s) },
-	{ "Gray"_s->GetHashCode(), Color::FromHtml("#808080"_s) },
-	{ "Green"_s->GetHashCode(), Color::FromHtml("#008000"_s) },
-	{ "GreenYellow"_s->GetHashCode(), Color::FromHtml("#ADFF2F"_s) },
-	{ "Honeydew"_s->GetHashCode(), Color::FromHtml("#F0FFF0"_s) },
-	{ "HotPink"_s->GetHashCode(), Color::FromHtml("#FF69B4"_s) },
-	{ "IndianRed"_s->GetHashCode(), Color::FromHtml("#CD5C5C"_s) },
-	{ "Indigo"_s->GetHashCode(), Color::FromHtml("#4B0082"_s) },
-	{ "Ivory"_s->GetHashCode(), Color::FromHtml("#FFFFF0"_s) },
-	{ "Khaki"_s->GetHashCode(), Color::FromHtml("#F0E68C"_s) },
-	{ "Lavender"_s->GetHashCode(), Color::FromHtml("#E6E6FA"_s) },
-	{ "LavenderBlush"_s->GetHashCode(), Color::FromHtml("#FFF0F5"_s) },
-	{ "LawnGreen"_s->GetHashCode(), Color::FromHtml("#7CFC00"_s) },
-	{ "LemonChiffon"_s->GetHashCode(), Color::FromHtml("#FFFACD"_s) },
-	{ "LightBlue"_s->GetHashCode(), Color::FromHtml("#ADD8E6"_s) },
-	{ "LightCoral"_s->GetHashCode(), Color::FromHtml("#F08080"_s) },
-	{ "LightCyan"_s->GetHashCode(), Color::FromHtml("#E0FFFF"_s) },
-	{ "LightGoldenrodYellow"_s->GetHashCode(), Color::FromHtml("#FAFAD2"_s) },
-	{ "LightGray"_s->GetHashCode(), Color::FromHtml("#D3D3D3"_s) },
-	{ "LightGreen"_s->GetHashCode(), Color::FromHtml("#90EE90"_s) },
-	{ "LightPink"_s->GetHashCode(), Color::FromHtml("#FFB6C1"_s) },
-	{ "LightSalmon"_s->GetHashCode(), Color::FromHtml("#FFA07A"_s) },
-	{ "LightSeaGreen"_s->GetHashCode(), Color::FromHtml("#20B2AA"_s) },
-	{ "LightSkyBlue"_s->GetHashCode(), Color::FromHtml("#87CEFA"_s) },
-	{ "LightSlateGray"_s->GetHashCode(), Color::FromHtml("#778899"_s) },
-	{ "LightSteelBlue"_s->GetHashCode(), Color::FromHtml("#B0C4DE"_s) },
-	{ "LightYellow"_s->GetHashCode(), Color::FromHtml("#FFFFE0"_s) },
-	{ "Lime"_s->GetHashCode(), Color::FromHtml("#00FF00"_s) },
-	{ "LimeGreen"_s->GetHashCode(), Color::FromHtml("#32CD32"_s) },
-	{ "Linen"_s->GetHashCode(), Color::FromHtml("#FAF0E6"_s) },
-	{ "Magenta"_s->GetHashCode(), Color::FromHtml("#FF00FF"_s) },
-	{ "Maroon"_s->GetHashCode(), Color::FromHtml("#800000"_s) },
-	{ "MediumAquamarine"_s->GetHashCode(), Color::FromHtml("#66CDAA"_s) },
-	{ "MediumBlue"_s->GetHashCode(), Color::FromHtml("#0000CD"_s) },
-	{ "MediumOrchid"_s->GetHashCode(), Color::FromHtml("#BA55D3"_s) },
-	{ "MediumPurple"_s->GetHashCode(), Color::FromHtml("#9370DB"_s) },
-	{ "MediumSeaGreen"_s->GetHashCode(), Color::FromHtml("#3CB371"_s) },
-	{ "MediumSlateBlue"_s->GetHashCode(), Color::FromHtml("#7B68EE"_s) },
-	{ "MediumSpringGreen"_s->GetHashCode(), Color::FromHtml("#00FA9A"_s) },
-	{ "MediumTurquoise"_s->GetHashCode(), Color::FromHtml("#48D1CC"_s) },
-	{ "MediumVioletRed"_s->GetHashCode(), Color::FromHtml("#C71585"_s) },
-	{ "MidnightBlue"_s->GetHashCode(), Color::FromHtml("#191970"_s) },
-	{ "MintCream"_s->GetHashCode(), Color::FromHtml("#F5FFFA"_s) },
-	{ "MistyRose"_s->GetHashCode(), Color::FromHtml("#FFE4E1"_s) },
-	{ "Moccasin"_s->GetHashCode(), Color::FromHtml("#FFE4B5"_s) },
-	{ "NavajoWhite"_s->GetHashCode(), Color::FromHtml("#FFDEAD"_s) },
-	{ "Navy"_s->GetHashCode(), Color::FromHtml("#000080"_s) },
-	{ "OldLace"_s->GetHashCode(), Color::FromHtml("#FDF5E6"_s) },
-	{ "Olive"_s->GetHashCode(), Color::FromHtml("#808000"_s) },
-	{ "OliveDrab"_s->GetHashCode(), Color::FromHtml("#6B8E23"_s) },
-	{ "Orange"_s->GetHashCode(), Color::FromHtml("#FFA500"_s) },
-	{ "OrangeRed"_s->GetHashCode(), Color::FromHtml("#FF4500"_s) },
-	{ "Orchid"_s->GetHashCode(), Color::FromHtml("#DA70D6"_s) },
-	{ "PaleGoldenrod"_s->GetHashCode(), Color::FromHtml("#EEE8AA"_s) },
-	{ "PaleGreen"_s->GetHashCode(), Color::FromHtml("#98FB98"_s) },
-	{ "PaleTurquoise"_s->GetHashCode(), Color::FromHtml("#AFEEEE"_s) },
-	{ "PaleVioletRed"_s->GetHashCode(), Color::FromHtml("#DB7093"_s) },
-	{ "PapayaWhip"_s->GetHashCode(), Color::FromHtml("#FFEFD5"_s) },
-	{ "PeachPuff"_s->GetHashCode(), Color::FromHtml("#FFDAB9"_s) },
-	{ "Peru"_s->GetHashCode(), Color::FromHtml("#CD853F"_s) },
-	{ "Pink"_s->GetHashCode(), Color::FromHtml("#FFC0CB"_s) },
-	{ "Plum"_s->GetHashCode(), Color::FromHtml("#DDA0DD"_s) },
-	{ "PowderBlue"_s->GetHashCode(), Color::FromHtml("#B0E0E6"_s) },
-	{ "Purple"_s->GetHashCode(), Color::FromHtml("#800080"_s) },
-	{ "Red"_s->GetHashCode(), Color::FromHtml("#FF0000"_s) },
-	{ "RosyBrown"_s->GetHashCode(), Color::FromHtml("#BC8F8F"_s) },
-	{ "RoyalBlue"_s->GetHashCode(), Color::FromHtml("#4169E1"_s) },
-	{ "SaddleBrown"_s->GetHashCode(), Color::FromHtml("#8B4513"_s) },
-	{ "Salmon"_s->GetHashCode(), Color::FromHtml("#FA8072"_s) },
-	{ "SandyBrown"_s->GetHashCode(), Color::FromHtml("#F4A460"_s) },
-	{ "SeaGreen"_s->GetHashCode(), Color::FromHtml("#2E8B57"_s) },
-	{ "SeaShell"_s->GetHashCode(), Color::FromHtml("#FFF5EE"_s) },
-	{ "Sienna"_s->GetHashCode(), Color::FromHtml("#A0522D"_s) },
-	{ "Silver"_s->GetHashCode(), Color::FromHtml("#C0C0C0"_s) },
-	{ "SkyBlue"_s->GetHashCode(), Color::FromHtml("#87CEEB"_s) },
-	{ "SlateBlue"_s->GetHashCode(), Color::FromHtml("#6A5ACD"_s) },
-	{ "SlateGray"_s->GetHashCode(), Color::FromHtml("#708090"_s) },
-	{ "Snow"_s->GetHashCode(), Color::FromHtml("#FFFAFA"_s) },
-	{ "SpringGreen"_s->GetHashCode(), Color::FromHtml("#00FF7F"_s) },
-	{ "SteelBlue"_s->GetHashCode(), Color::FromHtml("#4682B4"_s) },
-	{ "Tan"_s->GetHashCode(), Color::FromHtml("#D2B48C"_s) },
-	{ "Teal"_s->GetHashCode(), Color::FromHtml("#008080"_s) },
-	{ "Thistle"_s->GetHashCode(), Color::FromHtml("#D8BFD8"_s) },
-	{ "Tomato"_s->GetHashCode(), Color::FromHtml("#FF6347"_s) },
-	{ "Transparent"_s->GetHashCode(), Color::FromHtml("#00000000"_s) },
-	{ "Turquoise"_s->GetHashCode(), Color::FromHtml("#40E0D0"_s) },
-	{ "Violet"_s->GetHashCode(), Color::FromHtml("#EE82EE"_s) },
-	{ "Wheat"_s->GetHashCode(), Color::FromHtml("#F5DEB3"_s) },
-	{ "White"_s->GetHashCode(), Color::FromHtml("#FFFFFF"_s) },
-	{ "WhiteSmoke"_s->GetHashCode(), Color::FromHtml("#F5F5F5"_s) },
-	{ "Yellow"_s->GetHashCode(), Color::FromHtml("#FFFF00"_s) },
-	{ "YellowGreen"_s->GetHashCode(), Color::FromHtml("#9ACD32"_s) },
+	{ HashHelper::GetHashCode("AliceBlue"), Color::FromHtml("#F0F8FF") },
+	{ HashHelper::GetHashCode("AntiqueWhite"), Color::FromHtml("#FAEBD7") },
+	{ HashHelper::GetHashCode("Aqua"), Color::FromHtml("#00FFFF") },
+	{ HashHelper::GetHashCode("Aquamarine"), Color::FromHtml("#7FFFD4") },
+	{ HashHelper::GetHashCode("Azure"), Color::FromHtml("#F0FFFF") },
+	{ HashHelper::GetHashCode("Beige"), Color::FromHtml("#F5F5DC") },
+	{ HashHelper::GetHashCode("Bisque"), Color::FromHtml("#FFE4C4") },
+	{ HashHelper::GetHashCode("Black"), Color::FromHtml("#000000") },
+	{ HashHelper::GetHashCode("BlanchedAlmond"), Color::FromHtml("#FFEBCD") },
+	{ HashHelper::GetHashCode("Blue"), Color::FromHtml("#0000FF") },
+	{ HashHelper::GetHashCode("BlueViolet"), Color::FromHtml("#8A2BE2") },
+	{ HashHelper::GetHashCode("Brown"), Color::FromHtml("#A52A2A") },
+	{ HashHelper::GetHashCode("BurlyWood"), Color::FromHtml("#DEB887") },
+	{ HashHelper::GetHashCode("CadetBlue"), Color::FromHtml("#5F9EA0") },
+	{ HashHelper::GetHashCode("Chartreuse"), Color::FromHtml("#7FFF00") },
+	{ HashHelper::GetHashCode("Chocolate"), Color::FromHtml("#D2691E") },
+	{ HashHelper::GetHashCode("Coral"), Color::FromHtml("#FF7F50") },
+	{ HashHelper::GetHashCode("CornflowerBlue"), Color::FromHtml("#6495ED") },
+	{ HashHelper::GetHashCode("Cornsilk"), Color::FromHtml("#FFF8DC") },
+	{ HashHelper::GetHashCode("Crimson"), Color::FromHtml("#DC143C") },
+	{ HashHelper::GetHashCode("Cyan"), Color::FromHtml("#00FFFF") },
+	{ HashHelper::GetHashCode("DarkBlue"), Color::FromHtml("#00008B") },
+	{ HashHelper::GetHashCode("DarkCyan"), Color::FromHtml("#008B8B") },
+	{ HashHelper::GetHashCode("DarkGoldenrod"), Color::FromHtml("#B8860B") },
+	{ HashHelper::GetHashCode("DarkGray"), Color::FromHtml("#A9A9A9") },
+	{ HashHelper::GetHashCode("DarkGreen"), Color::FromHtml("#006400") },
+	{ HashHelper::GetHashCode("DarkKhaki"), Color::FromHtml("#BDB76B") },
+	{ HashHelper::GetHashCode("DarkMagenta"), Color::FromHtml("#8B008B") },
+	{ HashHelper::GetHashCode("DarkOliveGreen"), Color::FromHtml("#556B2F") },
+	{ HashHelper::GetHashCode("DarkOrange"), Color::FromHtml("#FF8C00") },
+	{ HashHelper::GetHashCode("DarkOrchid"), Color::FromHtml("#9932CC") },
+	{ HashHelper::GetHashCode("DarkRed"), Color::FromHtml("#8B0000") },
+	{ HashHelper::GetHashCode("DarkSalmon"), Color::FromHtml("#E9967A") },
+	{ HashHelper::GetHashCode("DarkSeaGreen"), Color::FromHtml("#8FBC8B") },
+	{ HashHelper::GetHashCode("DarkSlateBlue"), Color::FromHtml("#483D8B") },
+	{ HashHelper::GetHashCode("DarkSlateGray"), Color::FromHtml("#2F4F4F") },
+	{ HashHelper::GetHashCode("DarkTurquoise"), Color::FromHtml("#00CED1") },
+	{ HashHelper::GetHashCode("DarkViolet"), Color::FromHtml("#9400D3") },
+	{ HashHelper::GetHashCode("DeepPink"), Color::FromHtml("#FF1493") },
+	{ HashHelper::GetHashCode("DeepSkyBlue"), Color::FromHtml("#00BFFF") },
+	{ HashHelper::GetHashCode("DimGray"), Color::FromHtml("#696969") },
+	{ HashHelper::GetHashCode("DodgerBlue"), Color::FromHtml("#1E90FF") },
+	{ HashHelper::GetHashCode("Firebrick"), Color::FromHtml("#B22222") },
+	{ HashHelper::GetHashCode("FloralWhite"), Color::FromHtml("#FFFAF0") },
+	{ HashHelper::GetHashCode("ForestGreen"), Color::FromHtml("#228B22") },
+	{ HashHelper::GetHashCode("Fuchsia"), Color::FromHtml("#FF00FF") },
+	{ HashHelper::GetHashCode("Gainsboro"), Color::FromHtml("#DCDCDC") },
+	{ HashHelper::GetHashCode("GhostWhite"), Color::FromHtml("#F8F8FF") },
+	{ HashHelper::GetHashCode("Gold"), Color::FromHtml("#FFD700") },
+	{ HashHelper::GetHashCode("Goldenrod"), Color::FromHtml("#DAA520") },
+	{ HashHelper::GetHashCode("Gray"), Color::FromHtml("#808080") },
+	{ HashHelper::GetHashCode("Green"), Color::FromHtml("#008000") },
+	{ HashHelper::GetHashCode("GreenYellow"), Color::FromHtml("#ADFF2F") },
+	{ HashHelper::GetHashCode("Honeydew"), Color::FromHtml("#F0FFF0") },
+	{ HashHelper::GetHashCode("HotPink"), Color::FromHtml("#FF69B4") },
+	{ HashHelper::GetHashCode("IndianRed"), Color::FromHtml("#CD5C5C") },
+	{ HashHelper::GetHashCode("Indigo"), Color::FromHtml("#4B0082") },
+	{ HashHelper::GetHashCode("Ivory"), Color::FromHtml("#FFFFF0") },
+	{ HashHelper::GetHashCode("Khaki"), Color::FromHtml("#F0E68C") },
+	{ HashHelper::GetHashCode("Lavender"), Color::FromHtml("#E6E6FA") },
+	{ HashHelper::GetHashCode("LavenderBlush"), Color::FromHtml("#FFF0F5") },
+	{ HashHelper::GetHashCode("LawnGreen"), Color::FromHtml("#7CFC00") },
+	{ HashHelper::GetHashCode("LemonChiffon"), Color::FromHtml("#FFFACD") },
+	{ HashHelper::GetHashCode("LightBlue"), Color::FromHtml("#ADD8E6") },
+	{ HashHelper::GetHashCode("LightCoral"), Color::FromHtml("#F08080") },
+	{ HashHelper::GetHashCode("LightCyan"), Color::FromHtml("#E0FFFF") },
+	{ HashHelper::GetHashCode("LightGoldenrodYellow"), Color::FromHtml("#FAFAD2") },
+	{ HashHelper::GetHashCode("LightGray"), Color::FromHtml("#D3D3D3") },
+	{ HashHelper::GetHashCode("LightGreen"), Color::FromHtml("#90EE90") },
+	{ HashHelper::GetHashCode("LightPink"), Color::FromHtml("#FFB6C1") },
+	{ HashHelper::GetHashCode("LightSalmon"), Color::FromHtml("#FFA07A") },
+	{ HashHelper::GetHashCode("LightSeaGreen"), Color::FromHtml("#20B2AA") },
+	{ HashHelper::GetHashCode("LightSkyBlue"), Color::FromHtml("#87CEFA") },
+	{ HashHelper::GetHashCode("LightSlateGray"), Color::FromHtml("#778899") },
+	{ HashHelper::GetHashCode("LightSteelBlue"), Color::FromHtml("#B0C4DE") },
+	{ HashHelper::GetHashCode("LightYellow"), Color::FromHtml("#FFFFE0") },
+	{ HashHelper::GetHashCode("Lime"), Color::FromHtml("#00FF00") },
+	{ HashHelper::GetHashCode("LimeGreen"), Color::FromHtml("#32CD32") },
+	{ HashHelper::GetHashCode("Linen"), Color::FromHtml("#FAF0E6") },
+	{ HashHelper::GetHashCode("Magenta"), Color::FromHtml("#FF00FF") },
+	{ HashHelper::GetHashCode("Maroon"), Color::FromHtml("#800000") },
+	{ HashHelper::GetHashCode("MediumAquamarine"), Color::FromHtml("#66CDAA") },
+	{ HashHelper::GetHashCode("MediumBlue"), Color::FromHtml("#0000CD") },
+	{ HashHelper::GetHashCode("MediumOrchid"), Color::FromHtml("#BA55D3") },
+	{ HashHelper::GetHashCode("MediumPurple"), Color::FromHtml("#9370DB") },
+	{ HashHelper::GetHashCode("MediumSeaGreen"), Color::FromHtml("#3CB371") },
+	{ HashHelper::GetHashCode("MediumSlateBlue"), Color::FromHtml("#7B68EE") },
+	{ HashHelper::GetHashCode("MediumSpringGreen"), Color::FromHtml("#00FA9A") },
+	{ HashHelper::GetHashCode("MediumTurquoise"), Color::FromHtml("#48D1CC") },
+	{ HashHelper::GetHashCode("MediumVioletRed"), Color::FromHtml("#C71585") },
+	{ HashHelper::GetHashCode("MidnightBlue"), Color::FromHtml("#191970") },
+	{ HashHelper::GetHashCode("MintCream"), Color::FromHtml("#F5FFFA") },
+	{ HashHelper::GetHashCode("MistyRose"), Color::FromHtml("#FFE4E1") },
+	{ HashHelper::GetHashCode("Moccasin"), Color::FromHtml("#FFE4B5") },
+	{ HashHelper::GetHashCode("NavajoWhite"), Color::FromHtml("#FFDEAD") },
+	{ HashHelper::GetHashCode("Navy"), Color::FromHtml("#000080") },
+	{ HashHelper::GetHashCode("OldLace"), Color::FromHtml("#FDF5E6") },
+	{ HashHelper::GetHashCode("Olive"), Color::FromHtml("#808000") },
+	{ HashHelper::GetHashCode("OliveDrab"), Color::FromHtml("#6B8E23") },
+	{ HashHelper::GetHashCode("Orange"), Color::FromHtml("#FFA500") },
+	{ HashHelper::GetHashCode("OrangeRed"), Color::FromHtml("#FF4500") },
+	{ HashHelper::GetHashCode("Orchid"), Color::FromHtml("#DA70D6") },
+	{ HashHelper::GetHashCode("PaleGoldenrod"), Color::FromHtml("#EEE8AA") },
+	{ HashHelper::GetHashCode("PaleGreen"), Color::FromHtml("#98FB98") },
+	{ HashHelper::GetHashCode("PaleTurquoise"), Color::FromHtml("#AFEEEE") },
+	{ HashHelper::GetHashCode("PaleVioletRed"), Color::FromHtml("#DB7093") },
+	{ HashHelper::GetHashCode("PapayaWhip"), Color::FromHtml("#FFEFD5") },
+	{ HashHelper::GetHashCode("PeachPuff"), Color::FromHtml("#FFDAB9") },
+	{ HashHelper::GetHashCode("Peru"), Color::FromHtml("#CD853F") },
+	{ HashHelper::GetHashCode("Pink"), Color::FromHtml("#FFC0CB") },
+	{ HashHelper::GetHashCode("Plum"), Color::FromHtml("#DDA0DD") },
+	{ HashHelper::GetHashCode("PowderBlue"), Color::FromHtml("#B0E0E6") },
+	{ HashHelper::GetHashCode("Purple"), Color::FromHtml("#800080") },
+	{ HashHelper::GetHashCode("Red"), Color::FromHtml("#FF0000") },
+	{ HashHelper::GetHashCode("RosyBrown"), Color::FromHtml("#BC8F8F") },
+	{ HashHelper::GetHashCode("RoyalBlue"), Color::FromHtml("#4169E1") },
+	{ HashHelper::GetHashCode("SaddleBrown"), Color::FromHtml("#8B4513") },
+	{ HashHelper::GetHashCode("Salmon"), Color::FromHtml("#FA8072") },
+	{ HashHelper::GetHashCode("SandyBrown"), Color::FromHtml("#F4A460") },
+	{ HashHelper::GetHashCode("SeaGreen"), Color::FromHtml("#2E8B57") },
+	{ HashHelper::GetHashCode("SeaShell"), Color::FromHtml("#FFF5EE") },
+	{ HashHelper::GetHashCode("Sienna"), Color::FromHtml("#A0522D") },
+	{ HashHelper::GetHashCode("Silver"), Color::FromHtml("#C0C0C0") },
+	{ HashHelper::GetHashCode("SkyBlue"), Color::FromHtml("#87CEEB") },
+	{ HashHelper::GetHashCode("SlateBlue"), Color::FromHtml("#6A5ACD") },
+	{ HashHelper::GetHashCode("SlateGray"), Color::FromHtml("#708090") },
+	{ HashHelper::GetHashCode("Snow"), Color::FromHtml("#FFFAFA") },
+	{ HashHelper::GetHashCode("SpringGreen"), Color::FromHtml("#00FF7F") },
+	{ HashHelper::GetHashCode("SteelBlue"), Color::FromHtml("#4682B4") },
+	{ HashHelper::GetHashCode("Tan"), Color::FromHtml("#D2B48C") },
+	{ HashHelper::GetHashCode("Teal"), Color::FromHtml("#008080") },
+	{ HashHelper::GetHashCode("Thistle"), Color::FromHtml("#D8BFD8") },
+	{ HashHelper::GetHashCode("Tomato"), Color::FromHtml("#FF6347") },
+	{ HashHelper::GetHashCode("Transparent"), Color::FromHtml("#00000000") },
+	{ HashHelper::GetHashCode("Turquoise"), Color::FromHtml("#40E0D0") },
+	{ HashHelper::GetHashCode("Violet"), Color::FromHtml("#EE82EE") },
+	{ HashHelper::GetHashCode("Wheat"), Color::FromHtml("#F5DEB3") },
+	{ HashHelper::GetHashCode("White"), Color::FromHtml("#FFFFFF") },
+	{ HashHelper::GetHashCode("WhiteSmoke"), Color::FromHtml("#F5F5F5") },
+	{ HashHelper::GetHashCode("Yellow"), Color::FromHtml("#FFFF00") },
+	{ HashHelper::GetHashCode("YellowGreen"), Color::FromHtml("#9ACD32") },
 };
 
 Color::Color(float splat) : This(splat, splat, splat, splat)
@@ -364,7 +364,45 @@ Color Color::FromHtml(SString* html)
 	}
 
 	// In table color.
-	auto it = convertTable.find(html->GetHashCode());
+	auto it = convertTable.find(HashHelper::GetHashCode(html->AsMultiByte().c_str()));
+	if (it != convertTable.end())
+	{
+		return it->second;
+	}
+
+	return Color::Transparent;
+}
+
+Color Color::FromHtml(string_view html)
+{
+	if (html.length() == 0)
+	{
+		return Color::Transparent;
+	}
+
+	// #AARRGGBB
+	if (html.length() == 9)
+	{
+		istringstream wiss;
+		wiss.str(html.substr(1, 8).data());
+		uint32 hexCode;
+		wiss >> hex >> hexCode;
+		return Color::FromUInt(hexCode);
+	}
+
+	// #RRGGBB
+	if (html.length() == 7)
+	{
+		istringstream wiss;
+		wiss.str(html.substr(1, 6).data());
+		uint32 hexCode;
+		wiss >> hex >> hexCode;
+		hexCode |= 0xFF000000;
+		return Color::FromUInt(hexCode);
+	}
+
+	// In table color.
+	auto it = convertTable.find(HashHelper::GetHashCode(html.data()));
 	if (it != convertTable.end())
 	{
 		return it->second;
@@ -399,144 +437,144 @@ Color operator /(float left, const Color& right)
 	return Color(left, left, left, left) / right;
 }
 
-Color Color::AliceBlue = FromHtml("#F0F8FF"_s);
-Color Color::AntiqueWhite = FromHtml("#FAEBD7"_s);
-Color Color::Aqua = FromHtml("#00FFFF"_s);
-Color Color::Aquamarine = FromHtml("#7FFFD4"_s);
-Color Color::Azure = FromHtml("#F0FFFF"_s);
-Color Color::Beige = FromHtml("#F5F5DC"_s);
-Color Color::Bisque = FromHtml("#FFE4C4"_s);
-Color Color::Black = FromHtml("#000000"_s);
-Color Color::BlanchedAlmond = FromHtml("#FFEBCD"_s);
-Color Color::Blue = FromHtml("#0000FF"_s);
-Color Color::BlueViolet = FromHtml("#8A2BE2"_s);
-Color Color::Brown = FromHtml("#A52A2A"_s);
-Color Color::BurlyWood = FromHtml("#DEB887"_s);
-Color Color::CadetBlue = FromHtml("#5F9EA0"_s);
-Color Color::Chartreuse = FromHtml("#7FFF00"_s);
-Color Color::Chocolate = FromHtml("#D2691E"_s);
-Color Color::Coral = FromHtml("#FF7F50"_s);
-Color Color::CornflowerBlue = FromHtml("#6495ED"_s);
-Color Color::Cornsilk = FromHtml("#FFF8DC"_s);
-Color Color::Crimson = FromHtml("#DC143C"_s);
-Color Color::Cyan = FromHtml("#00FFFF"_s);
-Color Color::DarkBlue = FromHtml("#00008B"_s);
-Color Color::DarkCyan = FromHtml("#008B8B"_s);
-Color Color::DarkGoldenrod = FromHtml("#B8860B"_s);
-Color Color::DarkGray = FromHtml("#A9A9A9"_s);
-Color Color::DarkGreen = FromHtml("#006400"_s);
-Color Color::DarkKhaki = FromHtml("#BDB76B"_s);
-Color Color::DarkMagenta = FromHtml("#8B008B"_s);
-Color Color::DarkOliveGreen = FromHtml("#556B2F"_s);
-Color Color::DarkOrange = FromHtml("#FF8C00"_s);
-Color Color::DarkOrchid = FromHtml("#9932CC"_s);
-Color Color::DarkRed = FromHtml("#8B0000"_s);
-Color Color::DarkSalmon = FromHtml("#E9967A"_s);
-Color Color::DarkSeaGreen = FromHtml("#8FBC8B"_s);
-Color Color::DarkSlateBlue = FromHtml("#483D8B"_s);
-Color Color::DarkSlateGray = FromHtml("#2F4F4F"_s);
-Color Color::DarkTurquoise = FromHtml("#00CED1"_s);
-Color Color::DarkViolet = FromHtml("#9400D3"_s);
-Color Color::DeepPink = FromHtml("#FF1493"_s);
-Color Color::DeepSkyBlue = FromHtml("#00BFFF"_s);
-Color Color::DimGray = FromHtml("#696969"_s);
-Color Color::DodgerBlue = FromHtml("#1E90FF"_s);
-Color Color::Firebrick = FromHtml("#B22222"_s);
-Color Color::FloralWhite = FromHtml("#FFFAF0"_s);
-Color Color::ForestGreen = FromHtml("#228B22"_s);
-Color Color::Fuchsia = FromHtml("#FF00FF"_s);
-Color Color::Gainsboro = FromHtml("#DCDCDC"_s);
-Color Color::GhostWhite = FromHtml("#F8F8FF"_s);
-Color Color::Gold = FromHtml("#FFD700"_s);
-Color Color::Goldenrod = FromHtml("#DAA520"_s);
-Color Color::Gray = FromHtml("#808080"_s);
-Color Color::Green = FromHtml("#008000"_s);
-Color Color::GreenYellow = FromHtml("#ADFF2F"_s);
-Color Color::Honeydew = FromHtml("#F0FFF0"_s);
-Color Color::HotPink = FromHtml("#FF69B4"_s);
-Color Color::IndianRed = FromHtml("#CD5C5C"_s);
-Color Color::Indigo = FromHtml("#4B0082"_s);
-Color Color::Ivory = FromHtml("#FFFFF0"_s);
-Color Color::Khaki = FromHtml("#F0E68C"_s);
-Color Color::Lavender = FromHtml("#E6E6FA"_s);
-Color Color::LavenderBlush = FromHtml("#FFF0F5"_s);
-Color Color::LawnGreen = FromHtml("#7CFC00"_s);
-Color Color::LemonChiffon = FromHtml("#FFFACD"_s);
-Color Color::LightBlue = FromHtml("#ADD8E6"_s);
-Color Color::LightCoral = FromHtml("#F08080"_s);
-Color Color::LightCyan = FromHtml("#E0FFFF"_s);
-Color Color::LightGoldenrodYellow = FromHtml("#FAFAD2"_s);
-Color Color::LightGray = FromHtml("#D3D3D3"_s);
-Color Color::LightGreen = FromHtml("#90EE90"_s);
-Color Color::LightPink = FromHtml("#FFB6C1"_s);
-Color Color::LightSalmon = FromHtml("#FFA07A"_s);
-Color Color::LightSeaGreen = FromHtml("#20B2AA"_s);
-Color Color::LightSkyBlue = FromHtml("#87CEFA"_s);
-Color Color::LightSlateGray = FromHtml("#778899"_s);
-Color Color::LightSteelBlue = FromHtml("#B0C4DE"_s);
-Color Color::LightYellow = FromHtml("#FFFFE0"_s);
-Color Color::Lime = FromHtml("#00FF00"_s);
-Color Color::LimeGreen = FromHtml("#32CD32"_s);
-Color Color::Linen = FromHtml("#FAF0E6"_s);
-Color Color::Magenta = FromHtml("#FF00FF"_s);
-Color Color::Maroon = FromHtml("#800000"_s);
-Color Color::MediumAquamarine = FromHtml("#66CDAA"_s);
-Color Color::MediumBlue = FromHtml("#0000CD"_s);
-Color Color::MediumOrchid = FromHtml("#BA55D3"_s);
-Color Color::MediumPurple = FromHtml("#9370DB"_s);
-Color Color::MediumSeaGreen = FromHtml("#3CB371"_s);
-Color Color::MediumSlateBlue = FromHtml("#7B68EE"_s);
-Color Color::MediumSpringGreen = FromHtml("#00FA9A"_s);
-Color Color::MediumTurquoise = FromHtml("#48D1CC"_s);
-Color Color::MediumVioletRed = FromHtml("#C71585"_s);
-Color Color::MidnightBlue = FromHtml("#191970"_s);
-Color Color::MintCream = FromHtml("#F5FFFA"_s);
-Color Color::MistyRose = FromHtml("#FFE4E1"_s);
-Color Color::Moccasin = FromHtml("#FFE4B5"_s);
-Color Color::NavajoWhite = FromHtml("#FFDEAD"_s);
-Color Color::Navy = FromHtml("#000080"_s);
-Color Color::OldLace = FromHtml("#FDF5E6"_s);
-Color Color::Olive = FromHtml("#808000"_s);
-Color Color::OliveDrab = FromHtml("#6B8E23"_s);
-Color Color::Orange = FromHtml("#FFA500"_s);
-Color Color::OrangeRed = FromHtml("#FF4500"_s);
-Color Color::Orchid = FromHtml("#DA70D6"_s);
-Color Color::PaleGoldenrod = FromHtml("#EEE8AA"_s);
-Color Color::PaleGreen = FromHtml("#98FB98"_s);
-Color Color::PaleTurquoise = FromHtml("#AFEEEE"_s);
-Color Color::PaleVioletRed = FromHtml("#DB7093"_s);
-Color Color::PapayaWhip = FromHtml("#FFEFD5"_s);
-Color Color::PeachPuff = FromHtml("#FFDAB9"_s);
-Color Color::Peru = FromHtml("#CD853F"_s);
-Color Color::Pink = FromHtml("#FFC0CB"_s);
-Color Color::Plum = FromHtml("#DDA0DD"_s);
-Color Color::PowderBlue = FromHtml("#B0E0E6"_s);
-Color Color::Purple = FromHtml("#800080"_s);
-Color Color::Red = FromHtml("#FF0000"_s);
-Color Color::RosyBrown = FromHtml("#BC8F8F"_s);
-Color Color::RoyalBlue = FromHtml("#4169E1"_s);
-Color Color::SaddleBrown = FromHtml("#8B4513"_s);
-Color Color::Salmon = FromHtml("#FA8072"_s);
-Color Color::SandyBrown = FromHtml("#F4A460"_s);
-Color Color::SeaGreen = FromHtml("#2E8B57"_s);
-Color Color::SeaShell = FromHtml("#FFF5EE"_s);
-Color Color::Sienna = FromHtml("#A0522D"_s);
-Color Color::Silver = FromHtml("#C0C0C0"_s);
-Color Color::SkyBlue = FromHtml("#87CEEB"_s);
-Color Color::SlateBlue = FromHtml("#6A5ACD"_s);
-Color Color::SlateGray = FromHtml("#708090"_s);
-Color Color::Snow = FromHtml("#FFFAFA"_s);
-Color Color::SpringGreen = FromHtml("#00FF7F"_s);
-Color Color::SteelBlue = FromHtml("#4682B4"_s);
-Color Color::Tan = FromHtml("#D2B48C"_s);
-Color Color::Teal = FromHtml("#008080"_s);
-Color Color::Thistle = FromHtml("#D8BFD8"_s);
-Color Color::Tomato = FromHtml("#FF6347"_s);
-Color Color::Transparent = FromHtml("#00000000"_s);
-Color Color::Turquoise = FromHtml("#40E0D0"_s);
-Color Color::Violet = FromHtml("#EE82EE"_s);
-Color Color::Wheat = FromHtml("#F5DEB3"_s);
-Color Color::White = FromHtml("#FFFFFF"_s);
-Color Color::WhiteSmoke = FromHtml("#F5F5F5"_s);
-Color Color::Yellow = FromHtml("#FFFF00"_s);
-Color Color::YellowGreen = FromHtml("#9ACD32"_s);
+Color Color::AliceBlue = FromHtml("#F0F8FF");
+Color Color::AntiqueWhite = FromHtml("#FAEBD7");
+Color Color::Aqua = FromHtml("#00FFFF");
+Color Color::Aquamarine = FromHtml("#7FFFD4");
+Color Color::Azure = FromHtml("#F0FFFF");
+Color Color::Beige = FromHtml("#F5F5DC");
+Color Color::Bisque = FromHtml("#FFE4C4");
+Color Color::Black = FromHtml("#000000");
+Color Color::BlanchedAlmond = FromHtml("#FFEBCD");
+Color Color::Blue = FromHtml("#0000FF");
+Color Color::BlueViolet = FromHtml("#8A2BE2");
+Color Color::Brown = FromHtml("#A52A2A");
+Color Color::BurlyWood = FromHtml("#DEB887");
+Color Color::CadetBlue = FromHtml("#5F9EA0");
+Color Color::Chartreuse = FromHtml("#7FFF00");
+Color Color::Chocolate = FromHtml("#D2691E");
+Color Color::Coral = FromHtml("#FF7F50");
+Color Color::CornflowerBlue = FromHtml("#6495ED");
+Color Color::Cornsilk = FromHtml("#FFF8DC");
+Color Color::Crimson = FromHtml("#DC143C");
+Color Color::Cyan = FromHtml("#00FFFF");
+Color Color::DarkBlue = FromHtml("#00008B");
+Color Color::DarkCyan = FromHtml("#008B8B");
+Color Color::DarkGoldenrod = FromHtml("#B8860B");
+Color Color::DarkGray = FromHtml("#A9A9A9");
+Color Color::DarkGreen = FromHtml("#006400");
+Color Color::DarkKhaki = FromHtml("#BDB76B");
+Color Color::DarkMagenta = FromHtml("#8B008B");
+Color Color::DarkOliveGreen = FromHtml("#556B2F");
+Color Color::DarkOrange = FromHtml("#FF8C00");
+Color Color::DarkOrchid = FromHtml("#9932CC");
+Color Color::DarkRed = FromHtml("#8B0000");
+Color Color::DarkSalmon = FromHtml("#E9967A");
+Color Color::DarkSeaGreen = FromHtml("#8FBC8B");
+Color Color::DarkSlateBlue = FromHtml("#483D8B");
+Color Color::DarkSlateGray = FromHtml("#2F4F4F");
+Color Color::DarkTurquoise = FromHtml("#00CED1");
+Color Color::DarkViolet = FromHtml("#9400D3");
+Color Color::DeepPink = FromHtml("#FF1493");
+Color Color::DeepSkyBlue = FromHtml("#00BFFF");
+Color Color::DimGray = FromHtml("#696969");
+Color Color::DodgerBlue = FromHtml("#1E90FF");
+Color Color::Firebrick = FromHtml("#B22222");
+Color Color::FloralWhite = FromHtml("#FFFAF0");
+Color Color::ForestGreen = FromHtml("#228B22");
+Color Color::Fuchsia = FromHtml("#FF00FF");
+Color Color::Gainsboro = FromHtml("#DCDCDC");
+Color Color::GhostWhite = FromHtml("#F8F8FF");
+Color Color::Gold = FromHtml("#FFD700");
+Color Color::Goldenrod = FromHtml("#DAA520");
+Color Color::Gray = FromHtml("#808080");
+Color Color::Green = FromHtml("#008000");
+Color Color::GreenYellow = FromHtml("#ADFF2F");
+Color Color::Honeydew = FromHtml("#F0FFF0");
+Color Color::HotPink = FromHtml("#FF69B4");
+Color Color::IndianRed = FromHtml("#CD5C5C");
+Color Color::Indigo = FromHtml("#4B0082");
+Color Color::Ivory = FromHtml("#FFFFF0");
+Color Color::Khaki = FromHtml("#F0E68C");
+Color Color::Lavender = FromHtml("#E6E6FA");
+Color Color::LavenderBlush = FromHtml("#FFF0F5");
+Color Color::LawnGreen = FromHtml("#7CFC00");
+Color Color::LemonChiffon = FromHtml("#FFFACD");
+Color Color::LightBlue = FromHtml("#ADD8E6");
+Color Color::LightCoral = FromHtml("#F08080");
+Color Color::LightCyan = FromHtml("#E0FFFF");
+Color Color::LightGoldenrodYellow = FromHtml("#FAFAD2");
+Color Color::LightGray = FromHtml("#D3D3D3");
+Color Color::LightGreen = FromHtml("#90EE90");
+Color Color::LightPink = FromHtml("#FFB6C1");
+Color Color::LightSalmon = FromHtml("#FFA07A");
+Color Color::LightSeaGreen = FromHtml("#20B2AA");
+Color Color::LightSkyBlue = FromHtml("#87CEFA");
+Color Color::LightSlateGray = FromHtml("#778899");
+Color Color::LightSteelBlue = FromHtml("#B0C4DE");
+Color Color::LightYellow = FromHtml("#FFFFE0");
+Color Color::Lime = FromHtml("#00FF00");
+Color Color::LimeGreen = FromHtml("#32CD32");
+Color Color::Linen = FromHtml("#FAF0E6");
+Color Color::Magenta = FromHtml("#FF00FF");
+Color Color::Maroon = FromHtml("#800000");
+Color Color::MediumAquamarine = FromHtml("#66CDAA");
+Color Color::MediumBlue = FromHtml("#0000CD");
+Color Color::MediumOrchid = FromHtml("#BA55D3");
+Color Color::MediumPurple = FromHtml("#9370DB");
+Color Color::MediumSeaGreen = FromHtml("#3CB371");
+Color Color::MediumSlateBlue = FromHtml("#7B68EE");
+Color Color::MediumSpringGreen = FromHtml("#00FA9A");
+Color Color::MediumTurquoise = FromHtml("#48D1CC");
+Color Color::MediumVioletRed = FromHtml("#C71585");
+Color Color::MidnightBlue = FromHtml("#191970");
+Color Color::MintCream = FromHtml("#F5FFFA");
+Color Color::MistyRose = FromHtml("#FFE4E1");
+Color Color::Moccasin = FromHtml("#FFE4B5");
+Color Color::NavajoWhite = FromHtml("#FFDEAD");
+Color Color::Navy = FromHtml("#000080");
+Color Color::OldLace = FromHtml("#FDF5E6");
+Color Color::Olive = FromHtml("#808000");
+Color Color::OliveDrab = FromHtml("#6B8E23");
+Color Color::Orange = FromHtml("#FFA500");
+Color Color::OrangeRed = FromHtml("#FF4500");
+Color Color::Orchid = FromHtml("#DA70D6");
+Color Color::PaleGoldenrod = FromHtml("#EEE8AA");
+Color Color::PaleGreen = FromHtml("#98FB98");
+Color Color::PaleTurquoise = FromHtml("#AFEEEE");
+Color Color::PaleVioletRed = FromHtml("#DB7093");
+Color Color::PapayaWhip = FromHtml("#FFEFD5");
+Color Color::PeachPuff = FromHtml("#FFDAB9");
+Color Color::Peru = FromHtml("#CD853F");
+Color Color::Pink = FromHtml("#FFC0CB");
+Color Color::Plum = FromHtml("#DDA0DD");
+Color Color::PowderBlue = FromHtml("#B0E0E6");
+Color Color::Purple = FromHtml("#800080");
+Color Color::Red = FromHtml("#FF0000");
+Color Color::RosyBrown = FromHtml("#BC8F8F");
+Color Color::RoyalBlue = FromHtml("#4169E1");
+Color Color::SaddleBrown = FromHtml("#8B4513");
+Color Color::Salmon = FromHtml("#FA8072");
+Color Color::SandyBrown = FromHtml("#F4A460");
+Color Color::SeaGreen = FromHtml("#2E8B57");
+Color Color::SeaShell = FromHtml("#FFF5EE");
+Color Color::Sienna = FromHtml("#A0522D");
+Color Color::Silver = FromHtml("#C0C0C0");
+Color Color::SkyBlue = FromHtml("#87CEEB");
+Color Color::SlateBlue = FromHtml("#6A5ACD");
+Color Color::SlateGray = FromHtml("#708090");
+Color Color::Snow = FromHtml("#FFFAFA");
+Color Color::SpringGreen = FromHtml("#00FF7F");
+Color Color::SteelBlue = FromHtml("#4682B4");
+Color Color::Tan = FromHtml("#D2B48C");
+Color Color::Teal = FromHtml("#008080");
+Color Color::Thistle = FromHtml("#D8BFD8");
+Color Color::Tomato = FromHtml("#FF6347");
+Color Color::Transparent = FromHtml("#00000000");
+Color Color::Turquoise = FromHtml("#40E0D0");
+Color Color::Violet = FromHtml("#EE82EE");
+Color Color::Wheat = FromHtml("#F5DEB3");
+Color Color::White = FromHtml("#FFFFFF");
+Color Color::WhiteSmoke = FromHtml("#F5F5F5");
+Color Color::Yellow = FromHtml("#FFFF00");
+Color Color::YellowGreen = FromHtml("#9ACD32");

@@ -2,6 +2,8 @@
 
 #include "HashHelper.h"
 
+#include <string_view>
+
 using namespace std;
 
 #if _WIN64
@@ -20,4 +22,9 @@ static size_t GetHashCode(size_t N, const char* S, size_t H = FNV_Basis)
 size_t HashHelper::GetHashCode(float value)
 {
 	return ::GetHashCode(sizeof(float), (const char*)&value);
+}
+
+size_t HashHelper::GetHashCode(const char* name)
+{
+	return ::GetHashCode(string_view(name).length(), name);
 }

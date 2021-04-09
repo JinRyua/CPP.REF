@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreConcepts.h"
-#include "WeakReferences.h"
 #include "Reflection/ReflectionMacros.h"
 
 class SObject;
@@ -47,10 +46,8 @@ private:
 	static size_t ObjCount;
 #endif
 
-	bool bLockCollecting : 1;
 	bool bReferenceCollectiong : 1;
-	size_t ref_count;
-	mutable WeakReferences* weak_references;
+	mutable SType* cachedType;
 
 public:
 	/// <summary>
@@ -111,40 +108,6 @@ public:
 	bool operator ==(SObject* right) const;
 	bool operator !=(SObject* right) const;
 
-private:
-	/// <summary>
-	/// 개체의 참조 횟수를 1회 증가시킵니다.
-	/// </summary>
-	void AddRef();
-
-	/// <summary>
-	/// 개체의 참조 횟수를 1회 감소시킵니다.
-	/// </summary>
-	void Release();
-
-	/// <summary>
-	/// 개체의 참조 횟수를 1회 증가시킵니다.
-	/// </summary>
-	void AddRefInterlocked();
-
-	/// <summary>
-	/// 개체의 참조 횟수를 1회 감소시킵니다.
-	/// </summary>
-	void ReleaseInterlocked();
-
-	/// <summary>
-	/// 개체의 약한 참조를 가져옵니다.
-	/// </summary>
-	/// <returns> 약한 참조 개체가 반환됩니다. </returns>
-	WeakReferences* GetWeakReferences() const;
-
-public:
-	/// <summary>
-	/// 개체의 현재 참조 횟수를 가져옵니다.
-	/// </summary>
-	/// <returns> 참조 횟수가 반환됩니다. </returns>
-	size_t GetReferenceCount() const;
-
 #if WITH_DEBUG
 	static size_t GetObjectCount();
 #endif
@@ -155,12 +118,6 @@ protected:
 	/// </summary>
 	/// <param name="bNoReferenceCollect"> 레퍼런스 수집기 지정 여부입니다. </param>
 	SObject(bool bNoReferenceCollect);
-
-private:
-	constexpr static auto SPROPERTY_GetPropertyCount()
-	{
-		return 0;
-	}
 };
 
 #include "Object.inl"

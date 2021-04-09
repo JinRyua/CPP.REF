@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/TRefPtr.h"
 #include <utility>
 
 /// <summary>
@@ -74,27 +73,6 @@ private:
 		MyFunction MemberFunc;
 	};
 
-	template<TIsObject TCaller>
-	struct TCallableRef
-	{
-		using MyFunction = TRet(TCaller::*)(TArgs...);
-
-		TCallableRef(const TRefPtr<TCaller>& InRefPointer, TRet(TCaller::*InMemberFunc)(TArgs...))
-			: RefPointer(InRefPointer)
-			, MemberFunc(InMemberFunc)
-		{
-
-		}
-
-		TRet Invoke(TArgs&&... InArgs) override
-		{
-			return (RefPointer->*MemberFunc)(std::forward<TArgs>(InArgs)...);
-		}
-
-		TRefPtr<TCaller> RefPointer;
-		MyFunction MemberFunc;
-	};
-
 public:
 	/// <summary>
 	/// 개체를 초기화합니다.
@@ -151,25 +129,6 @@ public:
 		}
 
 		Invoker = new TCallableRaw(InRawPointer, InMemberFunc);
-	}
-
-	/// <summary>
-	/// 참조 포인터에 대한 클래스 함수를 바인딩합니다.
-	/// </summary>
-	/// <typeparam name="TCaller"> 클래스 형식을 전달합니다. </typeparam>
-	/// <param name="InRefPointer"> 참조 개체 포인터를 전달합니다. </param>
-	/// <param name="InMemberFunc"> 멤버 함수의 주소를 전달합니다. </param>
-	/// <returns> 바인딩 된 함수 대리자가 반환됩니다. </returns>
-	template<TIsObject TCaller>
-	void BindRef(TCaller* InRefPointer, TRet(TCaller::*InMemberFunc)(TArgs...))
-	{
-		if (Invoker != nullptr)
-		{
-			delete Invoker;
-			Invoker = nullptr;
-		}
-
-		Invoker = new TCallableRef(InRefPointer, InMemberFunc);
 	}
 
 	/// <summary>

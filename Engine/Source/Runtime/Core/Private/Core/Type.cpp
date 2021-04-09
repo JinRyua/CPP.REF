@@ -51,7 +51,7 @@ SType* SType::GetSuper() const
 	return TypeCollection::GetType(superRtti);
 }
 
-SField* SType::GetField(const char* name)
+SField* SType::GetField(const char* name) const
 {
 	for (size_t i = 0; i < fields.size(); ++i)
 	{
@@ -64,9 +64,14 @@ SField* SType::GetField(const char* name)
 	return nullptr;
 }
 
-SField* SType::GetField(SString* name)
+SField* SType::GetField(SString* name) const
 {
 	return GetField(name->AsMultiByte().c_str());
+}
+
+span<SField* const> SType::GetFields() const
+{
+	return fields;
 }
 
 void* SType::operator new(size_t length)

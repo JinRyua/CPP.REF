@@ -6,6 +6,7 @@
 
 #include <typeinfo>
 #include <functional>
+#include <span>
 #include "Reflection/TypeCollection.h"
 
 class SField;
@@ -79,14 +80,20 @@ public:
 	/// </summary>
 	/// <param name="name"> 필드 이름을 전달합니다. </param>
 	/// <returns> 형식 개체가 반환됩니다. </returns>
-	SField* GetField(const char* name);
+	SField* GetField(const char* name) const;
 
 	/// <summary>
 	/// 형식에 정의된 필드를 가져옵니다.
 	/// </summary>
 	/// <param name="name"> 필드 이름을 전달합니다. </param>
 	/// <returns> 형식 개체가 반환됩니다. </returns>
-	SField* GetField(SString* name);
+	SField* GetField(SString* name) const;
+
+	/// <summary>
+	/// 형식에 정의된 모든 필드를 가져옵니다.
+	/// </summary>
+	/// <returns> 모든 필드의 형식 개체가 반환됩니다. </returns>
+	std::span<SField* const> GetFields() const;
 
 	static void* operator new(size_t length);
 

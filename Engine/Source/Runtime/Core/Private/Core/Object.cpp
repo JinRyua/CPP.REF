@@ -2,9 +2,9 @@
 
 #include "Core/Object.h"
 
-#include "Core/TRefPtr.h"
+#include "Core/TGCRoot.h"
 #include "Core/String.h"
-#include "Core/ReferenceCollector.h"
+#include "Core/GarbageCollector.h"
 #include "Core/Type.h"
 #include "Threading/Interlocked.h"
 #include "Reflection/TypeCollection.h"
@@ -51,7 +51,7 @@ SObject::TypeRegisterImpl::TypeRegisterImpl()
 	TypeToObject = Reflection::TypeToObject<This>();
 	ObjectToType = Reflection::ObjectToType<This>();
 	Activator = []() { return new This(); };
-	SuperClass = &Super::TypeRegister;
+	SuperClass = nullptr;
 	
 	auto PropertyChain = GetPropertyChain<GetPropertyCount()>();
 	MemberDeclares.reserve(PropertyChain.size());
@@ -73,22 +73,9 @@ SObject::SObject() : This(false)
 
 SObject::~SObject()
 {
-	if (weak_references != nullptr)
-	{
-		if (weak_references->weakReferences == 0)
-		{
-			delete weak_references;
-			weak_references = nullptr;
-		}
-		else
-		{
-			weak_references->Invalidate();
-		}
-	}
-
 	if (bReferenceCollectiong)
 	{
-		ReferenceCollector::RemoveReference(this);
+		GarbageCollector::RemoveReference(this);
 
 #if WITH_DEBUG
 		Interlocked::Decrement64((int64&)ObjCount);
@@ -113,7 +100,11 @@ size_t SObject::GetHashCode() const
 
 SType* SObject::GetType() const
 {
-	return TypeCollection::GetType(typeid(*this));
+	if (cachedType == nullptr)
+	{
+		cachedType = TypeCollection::GetType(typeid(*this));
+	}
+	return cachedType;
 }
 
 bool SObject::operator ==(SObject* right) const
@@ -126,53 +117,6 @@ bool SObject::operator !=(SObject* right) const
 	return this != right;
 }
 
-void SObject::AddRef()
-{
-	ref_count += 1;
-}
-
-void SObject::Release()
-{
-	if ((ref_count -= 1) == 0)
-	{
-		if (!bLockCollecting)
-		{
-			delete this;
-		}
-	}
-}
-
-void SObject::AddRefInterlocked()
-{
-	Interlocked::Increment64((int64&)ref_count);
-}
-
-void SObject::ReleaseInterlocked()
-{
-	size_t decremented = (size_t)Interlocked::Decrement64((int64&)ref_count);
-	if (decremented == 0)
-	{
-		if (!bLockCollecting)
-		{
-			delete this;
-		}
-	}
-}
-
-WeakReferences* SObject::GetWeakReferences() const
-{
-	if (weak_references == nullptr)
-	{
-		weak_references = new WeakReferences();
-	}
-	return weak_references;
-}
-
-size_t SObject::GetReferenceCount() const
-{
-	return ref_count;
-}
-
 #if WITH_DEBUG
 
 size_t SObject::GetObjectCount()
@@ -183,14 +127,12 @@ size_t SObject::GetObjectCount()
 #endif
 
 SObject::SObject(bool bNoReferenceCollect)
-	: bLockCollecting(false)
-	, bReferenceCollectiong(!bNoReferenceCollect)
-	, ref_count(0)
-	, weak_references(nullptr)
+	: bReferenceCollectiong(!bNoReferenceCollect)
+	, cachedType(nullptr)
 {
 	if (bReferenceCollectiong)
 	{
-		ReferenceCollector::AddReference(this);
+		GarbageCollector::AddReference(this);
 
 #if WITH_DEBUG
 		Interlocked::Increment64((int64&)ObjCount);
