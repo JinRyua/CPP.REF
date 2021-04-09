@@ -10,8 +10,6 @@
 
 #define SCLASS_BODY(ClassType) \
 private:\
-	using SPROPERTY_CounterFunctionCall = Reflection::SPropertyMemberDeclare(*)();\
-	\
 	class TypeRegisterImpl : public TypeCollection::TypeRegisterBase\
 	{\
 	public:\
@@ -22,13 +20,13 @@ private:\
 		\
 		consteval static size_t GetPropertyCount();\
 		template<size_t Count>\
-		consteval static std::array<SPROPERTY_CounterFunctionCall, Count> GetPropertyChain();\
+		static std::array<Reflection::SPropertyMemberDeclare, Count> GetPropertyChain();\
 		\
 	private:\
 		template<size_t Index>\
 		consteval static auto GetPropertyCountImpl();\
 		template<size_t... Indexes>\
-		consteval static std::array<SPROPERTY_CounterFunctionCall, sizeof...(Indexes)> GetPropertyChainImpl(std::index_sequence<Indexes...>&&);\
+		static std::array<Reflection::SPropertyMemberDeclare, sizeof...(Indexes)> GetPropertyChainImpl(std::index_sequence<Indexes...>&&);\
 	};\
 	\
 protected:\
@@ -36,16 +34,20 @@ protected:\
 	\
 private:\
 	template<size_t N>\
-	static consteval SPROPERTY_CounterFunctionCall SPROPERTY_GetPropertyCounter()\
+	static consteval bool SPROPERTY_GetPropertyCounter()\
 	{\
-		return nullptr;\
+		return false;\
 	}\
 	\
-	template<size_t N>\
-	static Reflection::SPropertyMemberDeclare SPROPERTY_GetPropertyChain()\
+	template<class T, size_t N>\
+	class SPROPERTY_GetPropertyChain\
 	{\
-		return {};\
-	}\
+	public:\
+		Reflection::SPropertyMemberDeclare operator()()\
+		{\
+			return {};\
+		}\
+	};\
 	\
 public:\
 	using Super = This;\
@@ -55,7 +57,7 @@ public:\
 template<size_t Index>\
 consteval auto ClassType::TypeRegisterImpl::GetPropertyCountImpl()\
 {\
-	constexpr bool b = ClassType::template SPROPERTY_GetPropertyCounter<Index>() != nullptr;\
+	constexpr bool b = ClassType::template SPROPERTY_GetPropertyCounter<Index>();\
 	if constexpr (b)\
 	{\
 		return GetPropertyCountImpl<Index + 1>();\
@@ -72,15 +74,15 @@ consteval size_t ClassType::TypeRegisterImpl::GetPropertyCount()\
 }\
 \
 template<size_t Count>\
-consteval auto ClassType::TypeRegisterImpl::GetPropertyChain() -> std::array<SPROPERTY_CounterFunctionCall, Count>\
+auto ClassType::TypeRegisterImpl::GetPropertyChain() -> std::array<Reflection::SPropertyMemberDeclare, Count>\
 {\
 	return GetPropertyChainImpl(std::make_index_sequence<Count>{});\
 }\
 \
 template<size_t... Indexes>\
-consteval auto ClassType::TypeRegisterImpl::GetPropertyChainImpl(std::index_sequence<Indexes...>&&) -> std::array<SPROPERTY_CounterFunctionCall, sizeof...(Indexes)>\
+auto ClassType::TypeRegisterImpl::GetPropertyChainImpl(std::index_sequence<Indexes...>&&) -> std::array<Reflection::SPropertyMemberDeclare, sizeof...(Indexes)>\
 {\
-	return { ClassType::template SPROPERTY_GetPropertyCounter<Indexes>()... };\
+	return { ClassType::template SPROPERTY_GetPropertyChain<This, Indexes>()()... };\
 }\
 \
 ClassType::TypeRegisterImpl::TypeRegisterImpl()\
@@ -92,12 +94,12 @@ ClassType::TypeRegisterImpl::TypeRegisterImpl()\
 	Activator = []() { return new This(); };\
 	SuperClass = &Super::TypeRegister;\
 	\
-	constexpr auto PropertyChain = GetPropertyChain<GetPropertyCount()>();\
+	auto PropertyChain = GetPropertyChain<GetPropertyCount()>();\
 	MemberDeclares.reserve(PropertyChain.size());\
 	\
 	for (size_t i = 0; i < PropertyChain.size(); ++i)\
 	{\
-		MemberDeclares.emplace_back(PropertyChain[i]());\
+		MemberDeclares.emplace_back(PropertyChain[i]);\
 	}\
 	\
 	Register();\
@@ -108,30 +110,34 @@ ClassType::TypeRegisterImpl ClassType::TypeRegister;
 #define SPROPERTY_IMPL(VarType, VarName, Counter) \
 	VarType VarName;\
 	\
-	template<>\
-	static Reflection::SPropertyMemberDeclare SPROPERTY_GetPropertyChain<Counter - TypeRegisterImpl::CounterBase - 1>()\
+	template<class T>\
+	class SPROPERTY_GetPropertyChain<T, Counter - TypeRegisterImpl::CounterBase - 1>\
 	{\
-		if constexpr (TIsPointer<VarType>::Value)\
+	public:\
+		Reflection::SPropertyMemberDeclare operator()()\
 		{\
-			return \
+			if constexpr (TIsPointer<VarType>::Value)\
 			{\
-				.Offset = __builtin_offsetof(This, VarName),\
-				.Name = #VarName,\
-				.TypeToObject = Reflection::TypeToObject<typename TRemovePointer<VarType>::Type>(),\
-				.ObjectToType = Reflection::ObjectToType<typename TRemovePointer<VarType>::Type>(),\
-				.FieldType = Reflection::Typeid<typename TRemovePointer<VarType>::Type>()\
-			};\
+				return \
+				{\
+					.Offset = __builtin_offsetof(This, VarName),\
+					.Name = #VarName,\
+					.TypeToObject = Reflection::TypeToObject<typename TRemovePointer<VarType>::Type>(),\
+					.ObjectToType = Reflection::ObjectToType<typename TRemovePointer<VarType>::Type>(),\
+					.FieldType = Reflection::Typeid<typename TRemovePointer<VarType>::Type>()\
+				};\
+			}\
+			else\
+			{\
+				return { .Offset = __builtin_offsetof(This, VarName), .Name = #VarName, .FieldType = Reflection::Typeid<typename TRemovePointer<VarType>::Type>() };\
+			}\
 		}\
-		else\
-		{\
-			return { .Offset = __builtin_offsetof(This, VarName), .Name = #VarName };\
-		}\
-	}\
+	};\
 	\
 	template<>\
-	static consteval SPROPERTY_CounterFunctionCall SPROPERTY_GetPropertyCounter<Counter - TypeRegisterImpl::CounterBase - 1>()\
+	static consteval bool SPROPERTY_GetPropertyCounter<Counter - TypeRegisterImpl::CounterBase - 1>()\
 	{\
-		return &SPROPERTY_GetPropertyChain<Counter - TypeRegisterImpl::CounterBase - 1>;\
+		return true;\
 	}
 
 #define SPROPERTY(Type, Name) SPROPERTY_IMPL(Type, Name, __COUNTER__)

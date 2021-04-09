@@ -32,7 +32,7 @@ namespace Reflection
 	template<class T>
 	std::function<SObject*(void*)> TypeToObject()
 	{
-		static auto Caster = [](void* ptr)
+		static auto Caster = [](void* ptr) -> SObject*
 		{
 			T* typed = reinterpret_cast<T*>(ptr);
 			return typed;

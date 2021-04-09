@@ -16,32 +16,32 @@ size_t SObject::ObjCount;
 template<size_t Index>
 consteval auto SObject::TypeRegisterImpl::GetPropertyCountImpl()
 {
-	constexpr bool b = SObject::template SPROPERTY_GetPropertyCounter<Index>() != nullptr;
+	constexpr bool b = SObject::template SPROPERTY_GetPropertyCounter<Index>();
 	if constexpr (b)
 	{
 		return GetPropertyCountImpl<Index + 1>();
 	}
 	else
 	{
-		return Index - CounterBase;
+		return Index;
 	}
 }
 
 consteval size_t SObject::TypeRegisterImpl::GetPropertyCount()
 {
-	return GetPropertyCountImpl<CounterBase>();
+	return GetPropertyCountImpl<0>();
 }
 
 template<size_t Count>
-consteval auto SObject::TypeRegisterImpl::GetPropertyChain() -> std::array<SPROPERTY_CounterFunctionCall, Count>
+auto SObject::TypeRegisterImpl::GetPropertyChain() -> std::array<Reflection::SPropertyMemberDeclare, Count>
 {
 	return GetPropertyChainImpl(std::make_index_sequence<Count>{});
 }
 
 template<size_t... Indexes>
-consteval auto SObject::TypeRegisterImpl::GetPropertyChainImpl(std::index_sequence<Indexes...>&&) -> std::array<SPROPERTY_CounterFunctionCall, sizeof...(Indexes)>
+auto SObject::TypeRegisterImpl::GetPropertyChainImpl(std::index_sequence<Indexes...>&&) -> std::array<Reflection::SPropertyMemberDeclare, sizeof...(Indexes)>
 {
-	return { SObject::template SPROPERTY_GetPropertyCounter<Indexes>()... };
+	return { SObject::template SPROPERTY_GetPropertyChain<Indexes>()... };
 }
 
 SObject::TypeRegisterImpl::TypeRegisterImpl()
@@ -49,17 +49,18 @@ SObject::TypeRegisterImpl::TypeRegisterImpl()
 	RttiTypeId = typeid(This).hash_code();
 	ClassName = Name;
 	TypeToObject = Reflection::TypeToObject<This>();
+	ObjectToType = Reflection::ObjectToType<This>();
 	Activator = []() { return new This(); };
-	SuperClass = nullptr;
+	SuperClass = &Super::TypeRegister;
 	
-	constexpr static auto PropertyChain = GetPropertyChain<GetPropertyCount()>();
+	auto PropertyChain = GetPropertyChain<GetPropertyCount()>();
 	MemberDeclares.reserve(PropertyChain.size());
 	
 	for (size_t i = 0; i < PropertyChain.size(); ++i)
 	{
-		MemberDeclares.emplace_back(PropertyChain[i]());
+		MemberDeclares.emplace_back(PropertyChain[i]);
 	}
-
+	
 	Register();
 }
 
